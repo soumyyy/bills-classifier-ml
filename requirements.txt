@@ -1,0 +1,23 @@
+# --- Teacher labeling (Step 1) ---
+torch>=2.2,<3.0
+transformers>=4.40,<5.0
+huggingface_hub>=0.23
+accelerate>=0.30
+
+# --- Dataset assembly ---
+datasets>=2.19
+pillow>=10.0
+requests>=2.31
+
+# --- Student training + export (Step 2/3) ---
+tensorflow>=2.16,<2.17
+tensorflow-metal>=1.1; sys_platform == "darwin" and platform_machine == "arm64"
+coremltools>=7.2
+albumentations>=1.4
+
+# --- Metrics / utils ---
+scikit-learn>=1.4
+pandas>=2.2
+numpy<2.0
+tqdm>=4.66
+matplotlib>=3.8
