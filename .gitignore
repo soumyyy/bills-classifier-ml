@@ -1,6 +1,6 @@
 .venv/
 __pycache__/
 *.pyc
-data/
+/data/
 models/checkpoints/
 .DS_Store
