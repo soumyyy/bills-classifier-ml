@@ -1,0 +1,524 @@
+{
+  "architecture": "single MobileNetV3Large V2; direct and class heads ensembled",
+  "model_size_bytes": 3282456,
+  "target_validation_recall": 0.995,
+  "calibration": {
+    "alpha_direct_head": 1.0,
+    "alpha_class_bill_head": 0.0,
+    "threshold": 0.04790887981653213,
+    "metrics": {
+      "n": 776,
+      "positive": 322,
+      "negative": 454,
+      "recall": 0.9968944099378882,
+      "fpr": 0.27312775330396477,
+      "precision": 0.7213483146067415,
+      "auc": 0.9716871425835225,
+      "tp": 321,
+      "fn": 1,
+      "fp": 124,
+      "tn": 330
+    }
+  },
+  "test": {
+    "n": 745,
+    "positive": 323,
+    "negative": 422,
+    "recall": 0.9752321981424149,
+    "fpr": 0.22985781990521326,
+    "precision": 0.7645631067961165,
+    "auc": 0.9741170601440875,
+    "tp": 315,
+    "fn": 8,
+    "fp": 97,
+    "tn": 325
+  },
+  "folders": {
+    "TestPhotos": {
+      "correct": 17,
+      "evaluated": 17,
+      "skipped_offloaded": [],
+      "skipped_duplicates": [],
+      "details": [
+        {
+          "file": "WhatsApp Image 2026-08-14 at 13.35.49.jpeg",
+          "direct_score": 0.9599065184593201,
+          "class_bill_score": 0.9685741318389773,
+          "ensemble_score": 0.9599065184593201,
+          "predicted_bill": true,
+          "correct": true
+        },
+        {
+          "file": "WhatsApp Image 2026-08-14 at 13.35.50 (1).jpeg",
+          "direct_score": 0.7023594379425049,
+          "class_bill_score": 0.9458598711062223,
+          "ensemble_score": 0.7023594379425049,
+          "predicted_bill": true,
+          "correct": true
+        },
+        {
+          "file": "WhatsApp Image 2026-08-14 at 13.35.50.jpeg",
+          "direct_score": 0.7215964794158936,
+          "class_bill_score": 0.976332379039377,
+          "ensemble_score": 0.7215964794158936,
+          "predicted_bill": true,
+          "correct": true
+        },
+        {
+          "file": "WhatsApp Image 2026-08-14 at 13.35.51 (1).jpeg",
+          "direct_score": 0.6213230490684509,
+          "class_bill_score": 0.6490049585700035,
+          "ensemble_score": 0.6213230490684509,
+          "predicted_bill": true,
+          "correct": true
+        },
+        {
+          "file": "WhatsApp Image 2026-08-14 at 13.35.51.jpeg",
+          "direct_score": 0.695181131362915,
+          "class_bill_score": 0.513808399438858,
+          "ensemble_score": 0.695181131362915,
+          "predicted_bill": true,
+          "correct": true
+        },
+        {
+          "file": "WhatsApp Image 2026-08-14 at 13.35.52 (1).jpeg",
+          "direct_score": 0.869564414024353,
+          "class_bill_score": 0.9874515296542086,
+          "ensemble_score": 0.869564414024353,
+          "predicted_bill": true,
+          "correct": true
+        },
+        {
+          "file": "WhatsApp Image 2026-08-14 at 13.35.52 (2).jpeg",
+          "direct_score": 0.7871231436729431,
+          "class_bill_score": 0.7669876758009195,
+          "ensemble_score": 0.7871231436729431,
+          "predicted_bill": true,
+          "correct": true
+        },
+        {
+          "file": "WhatsApp Image 2026-08-14 at 13.35.52.jpeg",
+          "direct_score": 0.6358158588409424,
+          "class_bill_score": 0.948867378057912,
+          "ensemble_score": 0.6358158588409424,
+          "predicted_bill": true,
+          "correct": true
+        },
+        {
+          "file": "WhatsApp Image 2026-08-14 at 13.35.53 (1).jpeg",
+          "direct_score": 0.864457905292511,
+          "class_bill_score": 0.9805009885458276,
+          "ensemble_score": 0.864457905292511,
+          "predicted_bill": true,
+          "correct": true
+        },
+        {
+          "file": "WhatsApp Image 2026-08-14 at 13.35.53.jpeg",
+          "direct_score": 0.823078989982605,
+          "class_bill_score": 0.9807588967960328,
+          "ensemble_score": 0.823078989982605,
+          "predicted_bill": true,
+          "correct": true
+        },
+        {
+          "file": "WhatsApp Image 2026-08-14 at 13.35.54 (1).jpeg",
+          "direct_score": 0.5398395657539368,
+          "class_bill_score": 0.9097407828085124,
+          "ensemble_score": 0.5398395657539368,
+          "predicted_bill": true,
+          "correct": true
+        },
+        {
+          "file": "WhatsApp Image 2026-08-14 at 13.35.54.jpeg",
+          "direct_score": 0.9671629071235657,
+          "class_bill_score": 0.9892006939044222,
+          "ensemble_score": 0.9671629071235658,
+          "predicted_bill": true,
+          "correct": true
+        },
+        {
+          "file": "WhatsApp Image 2026-08-14 at 13.35.55 (1).jpeg",
+          "direct_score": 0.985289990901947,
+          "class_bill_score": 0.9945674606133252,
+          "ensemble_score": 0.9852899909019471,
+          "predicted_bill": true,
+          "correct": true
+        },
+        {
+          "file": "WhatsApp Image 2026-08-14 at 13.35.55 (2).jpeg",
+          "direct_score": 0.5567480325698853,
+          "class_bill_score": 0.8481641374528408,
+          "ensemble_score": 0.5567480325698853,
+          "predicted_bill": true,
+          "correct": true
+        },
+        {
+          "file": "WhatsApp Image 2026-08-14 at 13.35.55.jpeg",
+          "direct_score": 0.7848559617996216,
+          "class_bill_score": 0.25696988590061665,
+          "ensemble_score": 0.7848559617996216,
+          "predicted_bill": true,
+          "correct": true
+        },
+        {
+          "file": "WhatsApp Image 2026-08-14 at 13.35.56 (1).jpeg",
+          "direct_score": 0.9297640323638916,
+          "class_bill_score": 0.9583071358501911,
+          "ensemble_score": 0.9297640323638916,
+          "predicted_bill": true,
+          "correct": true
+        },
+        {
+          "file": "WhatsApp Image 2026-08-14 at 13.35.56.jpeg",
+          "direct_score": 0.3491881191730499,
+          "class_bill_score": 0.38823030330240726,
+          "ensemble_score": 0.3491881191730499,
+          "predicted_bill": true,
+          "correct": true
+        }
+      ]
+    },
+    "Negative_fitted": {
+      "correct": 13,
+      "evaluated": 17,
+      "skipped_offloaded": [],
+      "skipped_duplicates": [],
+      "details": [
+        {
+          "file": "179119.jpeg",
+          "direct_score": 0.013440439477562904,
+          "class_bill_score": 0.007675708853639662,
+          "ensemble_score": 0.013440439477562903,
+          "predicted_bill": false,
+          "correct": true
+        },
+        {
+          "file": "183996.jpeg",
+          "direct_score": 0.30172020196914673,
+          "class_bill_score": 0.5420029126107693,
+          "ensemble_score": 0.30172020196914673,
+          "predicted_bill": true,
+          "correct": false
+        },
+        {
+          "file": "194562.jpeg",
+          "direct_score": 0.006653562653809786,
+          "class_bill_score": 0.006540876347571611,
+          "ensemble_score": 0.006653562653809787,
+          "predicted_bill": false,
+          "correct": true
+        },
+        {
+          "file": "212504.jpeg",
+          "direct_score": 0.0011401588562875986,
+          "class_bill_score": 0.0015820540429558605,
+          "ensemble_score": 0.0011401588562875988,
+          "predicted_bill": false,
+          "correct": true
+        },
+        {
+          "file": "3096da16-2470-4c67-92c2-9b3125b0911f.jpg",
+          "direct_score": 0.1142294779419899,
+          "class_bill_score": 0.15518871322274208,
+          "ensemble_score": 0.11422947794198987,
+          "predicted_bill": true,
+          "correct": false
+        },
+        {
+          "file": "35df1041-4635-4252-9158-a89ae3de1a46.jpg",
+          "direct_score": 0.1174730733036995,
+          "class_bill_score": 0.0724738659337163,
+          "ensemble_score": 0.1174730733036995,
+          "predicted_bill": true,
+          "correct": false
+        },
+        {
+          "file": "3f572f1b-2fd5-4186-a27a-9fce712a3ffe.jpg",
+          "direct_score": 0.0002723243669606745,
+          "class_bill_score": 0.005594101385213435,
+          "ensemble_score": 0.0002723243669606744,
+          "predicted_bill": false,
+          "correct": true
+        },
+        {
+          "file": "6a634815-6801-4a60-9fe4-c2179e2558dd.jpg",
+          "direct_score": 0.013707928359508514,
+          "class_bill_score": 0.0182526889257133,
+          "ensemble_score": 0.01370792835950851,
+          "predicted_bill": false,
+          "correct": true
+        },
+        {
+          "file": "IMG_0206.PNG",
+          "direct_score": 0.007031158544123173,
+          "class_bill_score": 0.008384463741094805,
+          "ensemble_score": 0.0070311585441231745,
+          "predicted_bill": false,
+          "correct": true
+        },
+        {
+          "file": "IMG_0373.PNG",
+          "direct_score": 0.004483671858906746,
+          "class_bill_score": 0.0008663615008117631,
+          "ensemble_score": 0.004483671858906744,
+          "predicted_bill": false,
+          "correct": true
+        },
+        {
+          "file": "IMG_0921.jpeg",
+          "direct_score": 0.005139806307852268,
+          "class_bill_score": 0.002268710479256697,
+          "ensemble_score": 0.005139806307852267,
+          "predicted_bill": false,
+          "correct": true
+        },
+        {
+          "file": "IMG_3257.jpeg",
+          "direct_score": 0.019604910165071487,
+          "class_bill_score": 0.016824558144435287,
+          "ensemble_score": 0.019604910165071487,
+          "predicted_bill": false,
+          "correct": true
+        },
+        {
+          "file": "IMG_5200.jpeg",
+          "direct_score": 0.002213886473327875,
+          "class_bill_score": 0.001486238616053015,
+          "ensemble_score": 0.0022138864733278743,
+          "predicted_bill": false,
+          "correct": true
+        },
+        {
+          "file": "IMG_5683.PNG",
+          "direct_score": 0.05848056823015213,
+          "class_bill_score": 0.0426202523522079,
+          "ensemble_score": 0.05848056823015214,
+          "predicted_bill": true,
+          "correct": false
+        },
+        {
+          "file": "IMG_7899.PNG",
+          "direct_score": 0.0009075345587916672,
+          "class_bill_score": 0.0011735772422980517,
+          "ensemble_score": 0.0009075345587916669,
+          "predicted_bill": false,
+          "correct": true
+        },
+        {
+          "file": "a919a411-73b4-44fd-81e4-978d6253dbd4.jpg",
+          "direct_score": 0.006693796254694462,
+          "class_bill_score": 0.006901524029672146,
+          "ensemble_score": 0.006693796254694463,
+          "predicted_bill": false,
+          "correct": true
+        },
+        {
+          "file": "dce7ccdb-330a-4501-bf0f-a088d39f0c73.jpg",
+          "direct_score": 0.024035058915615082,
+          "class_bill_score": 0.03468358423560858,
+          "ensemble_score": 0.024035058915615082,
+          "predicted_bill": false,
+          "correct": true
+        }
+      ]
+    },
+    "N2_all_available": {
+      "correct": 7,
+      "evaluated": 11,
+      "skipped_offloaded": [
+        "185541.jpeg",
+        "9dd39cde-6041-4c06-a22c-f6ec1627842c.jpg"
+      ],
+      "skipped_duplicates": [],
+      "details": [
+        {
+          "file": "183996.jpeg",
+          "direct_score": 0.30172020196914673,
+          "class_bill_score": 0.5420029126107693,
+          "ensemble_score": 0.30172020196914673,
+          "predicted_bill": true,
+          "correct": false
+        },
+        {
+          "file": "38a252f3-d0e9-4c7c-adca-87999fc49a80.jpg",
+          "direct_score": 0.2711881399154663,
+          "class_bill_score": 0.22076607635244727,
+          "ensemble_score": 0.2711881399154663,
+          "predicted_bill": true,
+          "correct": false
+        },
+        {
+          "file": "7d99da33-c753-4d91-b800-6065c761283e.jpg",
+          "direct_score": 0.0002041213883785531,
+          "class_bill_score": 0.0007719545101281255,
+          "ensemble_score": 0.00020412138837855326,
+          "predicted_bill": false,
+          "correct": true
+        },
+        {
+          "file": "IMG_3472.jpeg",
+          "direct_score": 0.03246934711933136,
+          "class_bill_score": 0.019493604660965502,
+          "ensemble_score": 0.03246934711933136,
+          "predicted_bill": false,
+          "correct": true
+        },
+        {
+          "file": "IMG_3579.jpeg",
+          "direct_score": 0.1644742339849472,
+          "class_bill_score": 0.10299848392605782,
+          "ensemble_score": 0.16447423398494723,
+          "predicted_bill": true,
+          "correct": false
+        },
+        {
+          "file": "IMG_3702.jpeg",
+          "direct_score": 0.04504001513123512,
+          "class_bill_score": 0.004119493562029675,
+          "ensemble_score": 0.045040015131235116,
+          "predicted_bill": false,
+          "correct": true
+        },
+        {
+          "file": "IMG_6665.jpeg",
+          "direct_score": 0.022487683221697807,
+          "class_bill_score": 0.012918458553031087,
+          "ensemble_score": 0.022487683221697814,
+          "predicted_bill": false,
+          "correct": true
+        },
+        {
+          "file": "IMG_7683.PNG",
+          "direct_score": 0.0010017945896834135,
+          "class_bill_score": 0.0023727355619485024,
+          "ensemble_score": 0.0010017945896834137,
+          "predicted_bill": false,
+          "correct": true
+        },
+        {
+          "file": "IMG_8410.jpeg",
+          "direct_score": 8.604109461884946e-05,
+          "class_bill_score": 7.568939781776862e-05,
+          "ensemble_score": 8.60410946188495e-05,
+          "predicted_bill": false,
+          "correct": true
+        },
+        {
+          "file": "IMG_8447.jpeg",
+          "direct_score": 0.6529784798622131,
+          "class_bill_score": 0.2567874360829592,
+          "ensemble_score": 0.6529784798622131,
+          "predicted_bill": true,
+          "correct": false
+        },
+        {
+          "file": "d70bf0a6-44fa-48ca-b609-6555bbd994fd.jpg",
+          "direct_score": 0.014722630381584167,
+          "class_bill_score": 0.025125157088041306,
+          "ensemble_score": 0.014722630381584164,
+          "predicted_bill": false,
+          "correct": true
+        }
+      ]
+    },
+    "N2_independent_available": {
+      "correct": 7,
+      "evaluated": 10,
+      "skipped_offloaded": [
+        "185541.jpeg",
+        "9dd39cde-6041-4c06-a22c-f6ec1627842c.jpg"
+      ],
+      "skipped_duplicates": [
+        "183996.jpeg"
+      ],
+      "details": [
+        {
+          "file": "38a252f3-d0e9-4c7c-adca-87999fc49a80.jpg",
+          "direct_score": 0.2711881399154663,
+          "class_bill_score": 0.22076607635244727,
+          "ensemble_score": 0.2711881399154663,
+          "predicted_bill": true,
+          "correct": false
+        },
+        {
+          "file": "7d99da33-c753-4d91-b800-6065c761283e.jpg",
+          "direct_score": 0.0002041213883785531,
+          "class_bill_score": 0.0007719545101281255,
+          "ensemble_score": 0.00020412138837855326,
+          "predicted_bill": false,
+          "correct": true
+        },
+        {
+          "file": "IMG_3472.jpeg",
+          "direct_score": 0.03246934711933136,
+          "class_bill_score": 0.019493604660965502,
+          "ensemble_score": 0.03246934711933136,
+          "predicted_bill": false,
+          "correct": true
+        },
+        {
+          "file": "IMG_3579.jpeg",
+          "direct_score": 0.1644742339849472,
+          "class_bill_score": 0.10299848392605782,
+          "ensemble_score": 0.16447423398494723,
+          "predicted_bill": true,
+          "correct": false
+        },
+        {
+          "file": "IMG_3702.jpeg",
+          "direct_score": 0.04504001513123512,
+          "class_bill_score": 0.004119493562029675,
+          "ensemble_score": 0.045040015131235116,
+          "predicted_bill": false,
+          "correct": true
+        },
+        {
+          "file": "IMG_6665.jpeg",
+          "direct_score": 0.022487683221697807,
+          "class_bill_score": 0.012918458553031087,
+          "ensemble_score": 0.022487683221697814,
+          "predicted_bill": false,
+          "correct": true
+        },
+        {
+          "file": "IMG_7683.PNG",
+          "direct_score": 0.0010017945896834135,
+          "class_bill_score": 0.0023727355619485024,
+          "ensemble_score": 0.0010017945896834137,
+          "predicted_bill": false,
+          "correct": true
+        },
+        {
+          "file": "IMG_8410.jpeg",
+          "direct_score": 8.604109461884946e-05,
+          "class_bill_score": 7.568939781776862e-05,
+          "ensemble_score": 8.60410946188495e-05,
+          "predicted_bill": false,
+          "correct": true
+        },
+        {
+          "file": "IMG_8447.jpeg",
+          "direct_score": 0.6529784798622131,
+          "class_bill_score": 0.2567874360829592,
+          "ensemble_score": 0.6529784798622131,
+          "predicted_bill": true,
+          "correct": false
+        },
+        {
+          "file": "d70bf0a6-44fa-48ca-b609-6555bbd994fd.jpg",
+          "direct_score": 0.014722630381584167,
+          "class_bill_score": 0.025125157088041306,
+          "ensemble_score": 0.014722630381584164,
+          "predicted_bill": false,
+          "correct": true
+        }
+      ]
+    }
+  },
+  "data_coverage": {
+    "split_rows_evaluated": 1521,
+    "split_path": "/tmp/verifier_v2_production_local_splits.csv",
+    "warning": "This report used the locally materialized subset when a /tmp split was supplied. Rerun on the full split after iCloud placeholders download."
+  },
+  "interpretation": "Negative_fitted is a regression result, not generalization evidence. N2_independent_available excludes byte-identical overlap with Negative."
+}

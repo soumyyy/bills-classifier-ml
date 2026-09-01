@@ -1,0 +1,356 @@
+{
+  "source": "Google Android-in-the-Wild WebShopping",
+  "model": "/Users/soumya/Desktop/Projects/billsapp/bill-classifier/models/experiments/verifier_v2/model.tflite",
+  "baseline_threshold": 0.04790887981653213,
+  "manifest_rows": 5000,
+  "base_rows": 7456,
+  "output_rows": 11456,
+  "selected_training_screenshots": 2500,
+  "hardest_training_screenshots": 2250,
+  "random_diversity_screenshots": 250,
+  "selected_training_scores": {
+    "n": 2500,
+    "false_positive_rate": 0.048,
+    "mean": 0.014814300124678267,
+    "p50": 0.009195704944431782,
+    "p90": 0.03092987705022096,
+    "p95": 0.046811232157051484,
+    "p99": 0.09242427460849284,
+    "max": 0.22185015678405762
+  },
+  "baseline_by_screenshot_split": {
+    "train": {
+      "n": 3500,
+      "false_positive_rate": 0.03428571428571429,
+      "mean": 0.01097062239899138,
+      "p50": 0.0056462695356458426,
+      "p90": 0.025790505111217495,
+      "p95": 0.0390374906361102,
+      "p99": 0.08286227531731089,
+      "max": 0.22185015678405762
+    },
+    "val": {
+      "n": 750,
+      "false_positive_rate": 0.04,
+      "mean": 0.011723806997202095,
+      "p50": 0.0058594264555722475,
+      "p90": 0.024630693346262,
+      "p95": 0.041214277595281575,
+      "p99": 0.10584479354321955,
+      "max": 0.38934972882270813
+    },
+    "test": {
+      "n": 750,
+      "false_positive_rate": 0.044,
+      "mean": 0.01178072069493525,
+      "p50": 0.006517858477309346,
+      "p90": 0.025706822425127035,
+      "p95": 0.044804411940276616,
+      "p99": 0.09329790249466895,
+      "max": 0.23839204013347626
+    }
+  },
+  "top_training_examples": [
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/c522bb80b94bb9d6cba4ef11.jpg",
+      "score": 0.22185015678405762,
+      "goal": "Add macbook pro 13 inch to the cart on amazon.com, then select checkout.",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/dfa3c88a8e1a0f0f37b868d3.jpg",
+      "score": 0.18151257932186127,
+      "goal": "Clear all items from cart on amazon.com. Add logitech g pro to the cart on amazon.com",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/d90f7ea1b38b3327a73c8ae0.jpg",
+      "score": 0.1755974292755127,
+      "goal": "Nike Air Max 2020 shoes on Nike.com",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/7ac366d1bd96666cb731f0a0.jpg",
+      "score": 0.17241325974464417,
+      "goal": "Clear the cart on target.com. Add logitech g pro to the cart on target.com",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/a4dde43d436f315ac2abe373.jpg",
+      "score": 0.1481589823961258,
+      "goal": "Clear the cart on bestbuy.com. Search for razer kraken on bestbuy.com, select the first entry, add it to the cart, then select checkout.",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/9301664418294d1e9edca69e.jpg",
+      "score": 0.14278922975063324,
+      "goal": "Clear the cart on bestbuy.com. Search for razer kraken on bestbuy.com, select the first entry, add it to the cart, then select checkout.",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/0155272eb2100425c230b93e.jpg",
+      "score": 0.14190110564231873,
+      "goal": "Nike Air Max 2020 shoes on Nike.com",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/15135191e3e2becb230a8707.jpg",
+      "score": 0.13927966356277466,
+      "goal": "Clear all items from cart on target.com. Search for \"razer blade\" on target.com, select the first entry, add it to the cart, then select checkout.",
+      "current_activity": "com.android.chrome/org.chromium.chrome.browser.customtabs.CustomTabActivity"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/0295c86087b5329e2764031e.jpg",
+      "score": 0.13868537545204163,
+      "goal": "Add usb-a to the cart on amazon.com",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/3daa2d8d9fd096c609c811fa.jpg",
+      "score": 0.1357005089521408,
+      "goal": "Add razer blade to the cart on target.com",
+      "current_activity": "com.android.chrome/org.chromium.chrome.browser.customtabs.CustomTabActivity"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/ef10bd35e13c373e66af20b0.jpg",
+      "score": 0.12784439325332642,
+      "goal": "Search for razer kraken on target, select the first entry, add it to the cart, then select checkout.",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/d93dd2406577200644708152.jpg",
+      "score": 0.12601719796657562,
+      "goal": "Search for razer kraken on target, select the first entry, add it to the cart, then select checkout.",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/38385002ff128a3637472710.jpg",
+      "score": 0.12236910313367844,
+      "goal": "Empty the shopping cart on target.",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/c4286bcaabf5ec0bb18c200c.jpg",
+      "score": 0.11938634514808655,
+      "goal": "Clear the shopping cart on amazon.com. Add razer blade to the cart on amazon.com, then select checkout.",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/72e7145f7e1bf1f6a6e4d626.jpg",
+      "score": 0.11098846793174744,
+      "goal": "Clear the shopping cart on amazon.com. Add \"razer nari\" to the cart on amazon.com",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/dc6ce88a4b68edf629252842.jpg",
+      "score": 0.10820628702640533,
+      "goal": "Add razer blackwidow to the cart on amazon, then select checkout.",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/061a3cde16bb7779c0aea27e.jpg",
+      "score": 0.10411525517702103,
+      "goal": "View the shopping cart on ebay.com.",
+      "current_activity": "com.android.chrome/org.chromium.chrome.browser.customtabs.CustomTabActivity"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/ce3644894a422343a1540d56.jpg",
+      "score": 0.10023586452007294,
+      "goal": "Add macbook pro 13 inch to the cart on amazon.com, then select checkout.",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/6e12aeb42feb80a8a7890244.jpg",
+      "score": 0.09941989928483963,
+      "goal": "Clear the cart on bestbuy.com. Search for razer kraken on bestbuy.com, select the first entry, add it to the cart, then select checkout.",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/a29047495dfc8bf4830b85f6.jpg",
+      "score": 0.09801261872053146,
+      "goal": "Add \"apple airpods\" to the cart on bestbuy, then select checkout.",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/4327554b09f82f5dd30c4e5f.jpg",
+      "score": 0.09733927249908447,
+      "goal": "Show the shopping cart on ebay.com. Search for \"usb-b\" on ebay.com, select the first entry, add it to the cart, then select checkout.",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/812e33f36fec7aa1eb882d9b.jpg",
+      "score": 0.09692797064781189,
+      "goal": "Clear all items from cart on bestbuy.com. Add \"logitech g502\" to the cart on bestbuy.com",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/48a1b47f49590d006cfb6380.jpg",
+      "score": 0.09474283456802368,
+      "goal": "Add macbook pro 13 inch to the cart on amazon.com, then select checkout.",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/56bdee85b1bbec90a55addd7.jpg",
+      "score": 0.09357266128063202,
+      "goal": "Clear the shopping cart on amazon.com. Add razer blade to the cart on amazon.com, then select checkout.",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/bda8f84c111a63f23d472e43.jpg",
+      "score": 0.09249667078256607,
+      "goal": "Clear all items from cart on ebay.com. Add \"bose soundlink mini\" to the cart on ebay.com",
+      "current_activity": "com.android.chrome/org.chromium.chrome.browser.ChromeTabbedActivity"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/6d118b9274e32a6fb95bf772.jpg",
+      "score": 0.09242354333400726,
+      "goal": "Clear the shopping cart on bestbuy. Search for \"alienware aurora\" on bestbuy, select the first entry, and add it to the cart.",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/0faa6dc87cd7cf77b318e438.jpg",
+      "score": 0.09229163080453873,
+      "goal": "Show the shopping cart on ebay. Add macbook pro 15 inch to the cart on ebay",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/70591bc74e90e95d73da1dea.jpg",
+      "score": 0.0919404849410057,
+      "goal": "Clear the shopping cart on bestbuy. Search for \"alienware aurora\" on bestbuy, select the first entry, and add it to the cart.",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/c5f61de6362aebc3452bcb9f.jpg",
+      "score": 0.09013662487268448,
+      "goal": "Nike Air Max 2020 shoes on Nike.com",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/9c63a41c8e003f8eab5aa5e2.jpg",
+      "score": 0.08969224244356155,
+      "goal": "Add \"razer nari\" to the cart on amazon.com, then select checkout.",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/11249d0064ac5cf6da803bcc.jpg",
+      "score": 0.08913658559322357,
+      "goal": "Add \"logitech g pro\" to the cart on amazon, then select checkout.",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/93e8b446f0f5a9b76fb562f4.jpg",
+      "score": 0.0887104868888855,
+      "goal": "Clear the cart on bestbuy.com. Search for razer kraken on bestbuy.com, select the first entry, add it to the cart, then select checkout.",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/45ff0cbbbaf457029fab0e74.jpg",
+      "score": 0.08790617436170578,
+      "goal": "Add alienware aurora to the cart on walmart",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/e96d470ce61e72667a6fda94.jpg",
+      "score": 0.08574347198009491,
+      "goal": "Add \"apple airpods\" to the cart on bestbuy, then select checkout.",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/0c18a2cb3107f8cba0d966b9.jpg",
+      "score": 0.08452287316322327,
+      "goal": "View the shopping cart on ebay.com.",
+      "current_activity": "com.android.chrome/org.chromium.chrome.browser.customtabs.CustomTabActivity"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/673f14fb58af7c73a018dd21.jpg",
+      "score": 0.08284550160169601,
+      "goal": "Show the shopping cart on ebay.com. Search for \"usb-b\" on ebay.com, select the first entry, add it to the cart, then select checkout.",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/935e2fa77efe5c2b449fe83a.jpg",
+      "score": 0.08234860748052597,
+      "goal": "Clear the shopping cart on bestbuy.com. Add alienware aurora to the cart on bestbuy.com, then select checkout.",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/c22244c7b92b9f56c820f897.jpg",
+      "score": 0.08229460567235947,
+      "goal": "Clear the shopping cart on newegg.com. Search for macbook on newegg.com, select the first entry, add it to the cart, then select checkout.",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/637a425f262d566cdb0d9f32.jpg",
+      "score": 0.07991871982812881,
+      "goal": "Clear all items from cart on target.com. Search for \"beats solo 3\" on target.com, select the first entry, and add it to the cart.",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/eed444518d54c78a7880a98f.jpg",
+      "score": 0.07964900135993958,
+      "goal": "Add \"sony triple a\" to the cart on ebay.com, then select checkout.",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/29474507f9c062a5200cbd96.jpg",
+      "score": 0.07931739091873169,
+      "goal": "View the shopping cart on bestbuy. Add \"apple airpods pro\" to the cart on bestbuy",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/60502cc7dcdca31e72399ed3.jpg",
+      "score": 0.07863388955593109,
+      "goal": "Add usb-a to the cart on amazon.com",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/4cec0251fb5248de7d5c53d8.jpg",
+      "score": 0.07836959511041641,
+      "goal": "Clear the shopping cart on amazon.com. Search for usb-b on amazon.com, select the first entry, and add it to the cart.",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/7a74c855b539a704c7dd7b02.jpg",
+      "score": 0.07813344895839691,
+      "goal": "Clear the cart on newegg.com. Search for bose soundlink on newegg.com, select the first entry, add it to the cart, then select checkout.",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/9581d63b8454fbe4828e6672.jpg",
+      "score": 0.07677348703145981,
+      "goal": "Add razer blade to the cart on costco, then select checkout.",
+      "current_activity": "com.android.chrome/org.chromium.chrome.browser.customtabs.CustomTabActivity"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/48ee7ccb6bb42afb80db2c23.jpg",
+      "score": 0.07540503889322281,
+      "goal": "Clear all items from cart on amazon.com. Add razer thresher to the cart on amazon.com, then select checkout.",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/51aa77d278903cbcf7e385ec.jpg",
+      "score": 0.07535507529973984,
+      "goal": "Show the shopping cart on target.com.",
+      "current_activity": "com.android.chrome/org.chromium.chrome.browser.ChromeTabbedActivity"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/04f7ccee0de1c1fa7e0786a1.jpg",
+      "score": 0.07529613375663757,
+      "goal": "Show the shopping cart on newegg.com. Search for \"amazon basics triple a\" on newegg.com, select the first entry, and add it to the cart.",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/b39567ac5da283501f694eb6.jpg",
+      "score": 0.0750933364033699,
+      "goal": "Add macbook pro 13 inch to the cart on amazon.com, then select checkout.",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    },
+    {
+      "filepath": "data/raw/screenshot_negatives_aitw/f6a0688ecef9b36b85c82acb.jpg",
+      "score": 0.07474693655967712,
+      "goal": "Clear the shopping cart on walmart.com. Search for \"dell alienware\" on walmart.com, select the first entry, and add it to the cart.",
+      "current_activity": "com.android.chrome/com.google.android.apps.chrome.Main"
+    }
+  ],
+  "split_policy": "AITW episodes are hash-assigned 70/15/15. Only the top-scoring training candidates plus a random diversity sample are added to training; all validation and test screenshots remain source-disjoint from training."
+}

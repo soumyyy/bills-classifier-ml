@@ -1,0 +1,578 @@
+{
+  "architecture": "context-aware MobileNetV3Small triage router with balanced MobileNetV3Large fallback",
+  "router_model": "models/experiments/smart_router_v2/model.tflite",
+  "large_model": "/Users/soumya/Desktop/Projects/billsapp/bill-classifier/models/experiments/verifier_v2_screenshot_balanced/model.tflite",
+  "large_alpha": 0.8,
+  "large_threshold": 0.3006436387035705,
+  "target_validation_recall": 0.99,
+  "calibration": {
+    "recommended_accuracy_first": {
+      "n": 1778,
+      "positive": 574,
+      "negative": 1204,
+      "recall": 0.9912891986062717,
+      "fpr": 0.07475083056478406,
+      "precision": 0.8634294385432474,
+      "accuracy": 0.9465691788526435,
+      "tp": 569,
+      "fn": 5,
+      "fp": 90,
+      "tn": 1114,
+      "low_threshold": 0.17456096112728126,
+      "high_threshold": 0.768704850077629,
+      "route_rate": 0.10967379077615298
+    },
+    "speed_profiles": {
+      "route_cap_10pct": {
+        "n": 1778,
+        "positive": 574,
+        "negative": 1204,
+        "recall": 0.9912891986062717,
+        "fpr": 0.0755813953488372,
+        "precision": 0.8621212121212121,
+        "accuracy": 0.9460067491563554,
+        "tp": 569,
+        "fn": 5,
+        "fp": 91,
+        "tn": 1113,
+        "low_threshold": 0.17456096112728126,
+        "high_threshold": 0.741732579469681,
+        "route_rate": 0.09955005624296963
+      },
+      "route_cap_20pct": {
+        "n": 1778,
+        "positive": 574,
+        "negative": 1204,
+        "recall": 0.9912891986062717,
+        "fpr": 0.07475083056478406,
+        "precision": 0.8634294385432474,
+        "accuracy": 0.9465691788526435,
+        "tp": 569,
+        "fn": 5,
+        "fp": 90,
+        "tn": 1114,
+        "low_threshold": 0.17456096112728126,
+        "high_threshold": 0.768704850077629,
+        "route_rate": 0.10967379077615298
+      },
+      "route_cap_30pct": {
+        "n": 1778,
+        "positive": 574,
+        "negative": 1204,
+        "recall": 0.9912891986062717,
+        "fpr": 0.07475083056478406,
+        "precision": 0.8634294385432474,
+        "accuracy": 0.9465691788526435,
+        "tp": 569,
+        "fn": 5,
+        "fp": 90,
+        "tn": 1114,
+        "low_threshold": 0.17456096112728126,
+        "high_threshold": 0.768704850077629,
+        "route_rate": 0.10967379077615298
+      },
+      "route_cap_50pct": {
+        "n": 1778,
+        "positive": 574,
+        "negative": 1204,
+        "recall": 0.9912891986062717,
+        "fpr": 0.07475083056478406,
+        "precision": 0.8634294385432474,
+        "accuracy": 0.9465691788526435,
+        "tp": 569,
+        "fn": 5,
+        "fp": 90,
+        "tn": 1114,
+        "low_threshold": 0.17456096112728126,
+        "high_threshold": 0.768704850077629,
+        "route_rate": 0.10967379077615298
+      }
+    }
+  },
+  "test": {
+    "smart_pipeline": {
+      "n": 1747,
+      "positive": 575,
+      "negative": 1172,
+      "recall": 0.9721739130434782,
+      "fpr": 0.06911262798634812,
+      "precision": 0.8734375,
+      "accuracy": 0.9444762449914138,
+      "tp": 559,
+      "fn": 16,
+      "fp": 81,
+      "tn": 1091,
+      "route_rate": 0.11677160847166572
+    },
+    "smart_router_standalone": {
+      "n": 1747,
+      "positive": 575,
+      "negative": 1172,
+      "recall": 0.9808695652173913,
+      "fpr": 0.10068259385665529,
+      "precision": 0.8269794721407625,
+      "accuracy": 0.9261591299370349,
+      "tp": 564,
+      "fn": 11,
+      "fp": 118,
+      "tn": 1054,
+      "auc": 0.9878943463421873
+    },
+    "large_standalone": {
+      "n": 1747,
+      "positive": 575,
+      "negative": 1172,
+      "recall": 0.9808695652173913,
+      "fpr": 0.07252559726962457,
+      "precision": 0.8690292758089369,
+      "accuracy": 0.9450486548368632,
+      "tp": 564,
+      "fn": 11,
+      "fp": 85,
+      "tn": 1087,
+      "auc": 0.9923297225107583
+    },
+    "groups": {
+      "direct_bill": {
+        "n": 323,
+        "correct": 312,
+        "rate": 0.9659442724458205
+      },
+      "screenshot_bill": {
+        "n": 252,
+        "correct": 247,
+        "rate": 0.9801587301587301
+      },
+      "direct_nonbill": {
+        "n": 422,
+        "correct": 341,
+        "rate": 0.8080568720379147
+      },
+      "screenshot_nonbill": {
+        "n": 750,
+        "correct": 750,
+        "rate": 1.0
+      }
+    },
+    "speed_profiles": {
+      "route_cap_10pct": {
+        "n": 1747,
+        "positive": 575,
+        "negative": 1172,
+        "recall": 0.9721739130434782,
+        "fpr": 0.06996587030716724,
+        "precision": 0.8720748829953198,
+        "accuracy": 0.9439038351459645,
+        "tp": 559,
+        "fn": 16,
+        "fp": 82,
+        "tn": 1090,
+        "route_rate": 0.10933028048082427
+      },
+      "route_cap_20pct": {
+        "n": 1747,
+        "positive": 575,
+        "negative": 1172,
+        "recall": 0.9721739130434782,
+        "fpr": 0.06911262798634812,
+        "precision": 0.8734375,
+        "accuracy": 0.9444762449914138,
+        "tp": 559,
+        "fn": 16,
+        "fp": 81,
+        "tn": 1091,
+        "route_rate": 0.11677160847166572
+      },
+      "route_cap_30pct": {
+        "n": 1747,
+        "positive": 575,
+        "negative": 1172,
+        "recall": 0.9721739130434782,
+        "fpr": 0.06911262798634812,
+        "precision": 0.8734375,
+        "accuracy": 0.9444762449914138,
+        "tp": 559,
+        "fn": 16,
+        "fp": 81,
+        "tn": 1091,
+        "route_rate": 0.11677160847166572
+      },
+      "route_cap_50pct": {
+        "n": 1747,
+        "positive": 575,
+        "negative": 1172,
+        "recall": 0.9721739130434782,
+        "fpr": 0.06911262798634812,
+        "precision": 0.8734375,
+        "accuracy": 0.9444762449914138,
+        "tp": 559,
+        "fn": 16,
+        "fp": 81,
+        "tn": 1091,
+        "route_rate": 0.11677160847166572
+      }
+    }
+  },
+  "folders": {
+    "TestPhotos": {
+      "evaluated": 17,
+      "correct": 16,
+      "route_rate": 0.17647058823529413,
+      "skipped_offloaded": [],
+      "details": [
+        {
+          "file": "WhatsApp Image 2026-08-14 at 13.35.49.jpeg",
+          "router_score": 0.9341508746147156,
+          "large_score": 0.9508756011738333,
+          "routed": false,
+          "predicted_bill": true
+        },
+        {
+          "file": "WhatsApp Image 2026-08-14 at 13.35.50 (1).jpeg",
+          "router_score": 0.9730408191680908,
+          "large_score": 0.9333819075006567,
+          "routed": false,
+          "predicted_bill": true
+        },
+        {
+          "file": "WhatsApp Image 2026-08-14 at 13.35.50.jpeg",
+          "router_score": 0.8609418869018555,
+          "large_score": 0.9654557346288308,
+          "routed": false,
+          "predicted_bill": true
+        },
+        {
+          "file": "WhatsApp Image 2026-08-14 at 13.35.51 (1).jpeg",
+          "router_score": 0.8669102787971497,
+          "large_score": 0.8566767595480795,
+          "routed": false,
+          "predicted_bill": true
+        },
+        {
+          "file": "WhatsApp Image 2026-08-14 at 13.35.51.jpeg",
+          "router_score": 0.7783262133598328,
+          "large_score": 0.8709064484877499,
+          "routed": false,
+          "predicted_bill": true
+        },
+        {
+          "file": "WhatsApp Image 2026-08-14 at 13.35.52 (1).jpeg",
+          "router_score": 0.8853111863136292,
+          "large_score": 0.9950601506968348,
+          "routed": false,
+          "predicted_bill": true
+        },
+        {
+          "file": "WhatsApp Image 2026-08-14 at 13.35.52 (2).jpeg",
+          "router_score": 0.978234052658081,
+          "large_score": 0.9482624899144517,
+          "routed": false,
+          "predicted_bill": true
+        },
+        {
+          "file": "WhatsApp Image 2026-08-14 at 13.35.52.jpeg",
+          "router_score": 0.9353700280189514,
+          "large_score": 0.8804622901131643,
+          "routed": false,
+          "predicted_bill": true
+        },
+        {
+          "file": "WhatsApp Image 2026-08-14 at 13.35.53 (1).jpeg",
+          "router_score": 0.9030166864395142,
+          "large_score": 0.9877531684835271,
+          "routed": false,
+          "predicted_bill": true
+        },
+        {
+          "file": "WhatsApp Image 2026-08-14 at 13.35.53.jpeg",
+          "router_score": 0.9413053393363953,
+          "large_score": 0.9467587502089938,
+          "routed": false,
+          "predicted_bill": true
+        },
+        {
+          "file": "WhatsApp Image 2026-08-14 at 13.35.54 (1).jpeg",
+          "router_score": 0.8852840065956116,
+          "large_score": 0.9710992587564526,
+          "routed": false,
+          "predicted_bill": true
+        },
+        {
+          "file": "WhatsApp Image 2026-08-14 at 13.35.54.jpeg",
+          "router_score": 0.9882804751396179,
+          "large_score": 0.9800872512554418,
+          "routed": false,
+          "predicted_bill": true
+        },
+        {
+          "file": "WhatsApp Image 2026-08-14 at 13.35.55 (1).jpeg",
+          "router_score": 0.9871402978897095,
+          "large_score": 0.9892887284168208,
+          "routed": false,
+          "predicted_bill": true
+        },
+        {
+          "file": "WhatsApp Image 2026-08-14 at 13.35.55 (2).jpeg",
+          "router_score": 0.16824516654014587,
+          "large_score": 0.7562470486412053,
+          "routed": false,
+          "predicted_bill": false
+        },
+        {
+          "file": "WhatsApp Image 2026-08-14 at 13.35.55.jpeg",
+          "router_score": 0.5022380352020264,
+          "large_score": 0.9504476098754955,
+          "routed": true,
+          "predicted_bill": true
+        },
+        {
+          "file": "WhatsApp Image 2026-08-14 at 13.35.56 (1).jpeg",
+          "router_score": 0.3496614694595337,
+          "large_score": 0.9862532012045672,
+          "routed": true,
+          "predicted_bill": true
+        },
+        {
+          "file": "WhatsApp Image 2026-08-14 at 13.35.56.jpeg",
+          "router_score": 0.38186997175216675,
+          "large_score": 0.6732820775149301,
+          "routed": true,
+          "predicted_bill": true
+        }
+      ]
+    },
+    "Negative": {
+      "evaluated": 17,
+      "correct": 14,
+      "route_rate": 0.058823529411764705,
+      "skipped_offloaded": [],
+      "details": [
+        {
+          "file": "179119.jpeg",
+          "router_score": 0.003429232630878687,
+          "large_score": 0.005487795111096232,
+          "routed": false,
+          "predicted_bill": false
+        },
+        {
+          "file": "183996.jpeg",
+          "router_score": 0.8324330449104309,
+          "large_score": 0.9700789140048839,
+          "routed": false,
+          "predicted_bill": true
+        },
+        {
+          "file": "194562.jpeg",
+          "router_score": 0.0018805928993970156,
+          "large_score": 0.0038697334733987596,
+          "routed": false,
+          "predicted_bill": false
+        },
+        {
+          "file": "212504.jpeg",
+          "router_score": 0.0023017795756459236,
+          "large_score": 0.013527058938532089,
+          "routed": false,
+          "predicted_bill": false
+        },
+        {
+          "file": "3096da16-2470-4c67-92c2-9b3125b0911f.jpg",
+          "router_score": 0.9918507933616638,
+          "large_score": 0.7418654616025299,
+          "routed": false,
+          "predicted_bill": true
+        },
+        {
+          "file": "35df1041-4635-4252-9158-a89ae3de1a46.jpg",
+          "router_score": 0.6219795942306519,
+          "large_score": 0.2996280562312445,
+          "routed": true,
+          "predicted_bill": false
+        },
+        {
+          "file": "3f572f1b-2fd5-4186-a27a-9fce712a3ffe.jpg",
+          "router_score": 0.003971675876528025,
+          "large_score": 0.0044322233774054835,
+          "routed": false,
+          "predicted_bill": false
+        },
+        {
+          "file": "6a634815-6801-4a60-9fe4-c2179e2558dd.jpg",
+          "router_score": 0.03349947929382324,
+          "large_score": 0.10860215992291515,
+          "routed": false,
+          "predicted_bill": false
+        },
+        {
+          "file": "IMG_0206.PNG",
+          "router_score": 0.016928954049944878,
+          "large_score": 0.009410815227897917,
+          "routed": false,
+          "predicted_bill": false
+        },
+        {
+          "file": "IMG_0373.PNG",
+          "router_score": 0.0021483092568814754,
+          "large_score": 0.005900253615168634,
+          "routed": false,
+          "predicted_bill": false
+        },
+        {
+          "file": "IMG_0921.jpeg",
+          "router_score": 0.0017247117357328534,
+          "large_score": 0.03447795312333263,
+          "routed": false,
+          "predicted_bill": false
+        },
+        {
+          "file": "IMG_3257.jpeg",
+          "router_score": 0.005756871774792671,
+          "large_score": 0.1280806233022666,
+          "routed": false,
+          "predicted_bill": false
+        },
+        {
+          "file": "IMG_5200.jpeg",
+          "router_score": 0.002426730701699853,
+          "large_score": 0.003999899428219124,
+          "routed": false,
+          "predicted_bill": false
+        },
+        {
+          "file": "IMG_5683.PNG",
+          "router_score": 0.922171413898468,
+          "large_score": 0.45414905722473936,
+          "routed": false,
+          "predicted_bill": true
+        },
+        {
+          "file": "IMG_7899.PNG",
+          "router_score": 0.0021567794028669596,
+          "large_score": 0.0018212758556835783,
+          "routed": false,
+          "predicted_bill": false
+        },
+        {
+          "file": "a919a411-73b4-44fd-81e4-978d6253dbd4.jpg",
+          "router_score": 0.011654690839350224,
+          "large_score": 0.010324281345799206,
+          "routed": false,
+          "predicted_bill": false
+        },
+        {
+          "file": "dce7ccdb-330a-4501-bf0f-a088d39f0c73.jpg",
+          "router_score": 0.0501861572265625,
+          "large_score": 0.036251565216247575,
+          "routed": false,
+          "predicted_bill": false
+        }
+      ]
+    },
+    "N2": {
+      "evaluated": 11,
+      "correct": 7,
+      "route_rate": 0.2727272727272727,
+      "skipped_offloaded": [
+        "185541.jpeg",
+        "9dd39cde-6041-4c06-a22c-f6ec1627842c.jpg"
+      ],
+      "details": [
+        {
+          "file": "183996.jpeg",
+          "router_score": 0.8324330449104309,
+          "large_score": 0.9700789140048839,
+          "routed": false,
+          "predicted_bill": true
+        },
+        {
+          "file": "38a252f3-d0e9-4c7c-adca-87999fc49a80.jpg",
+          "router_score": 0.07638480514287949,
+          "large_score": 0.8409152468728684,
+          "routed": false,
+          "predicted_bill": false
+        },
+        {
+          "file": "7d99da33-c753-4d91-b800-6065c761283e.jpg",
+          "router_score": 0.00025614097830839455,
+          "large_score": 0.003177376234167958,
+          "routed": false,
+          "predicted_bill": false
+        },
+        {
+          "file": "IMG_3472.jpeg",
+          "router_score": 0.6375537514686584,
+          "large_score": 0.5742918977322863,
+          "routed": true,
+          "predicted_bill": true
+        },
+        {
+          "file": "IMG_3579.jpeg",
+          "router_score": 0.9781585335731506,
+          "large_score": 0.9657276115949909,
+          "routed": false,
+          "predicted_bill": true
+        },
+        {
+          "file": "IMG_3702.jpeg",
+          "router_score": 0.037650614976882935,
+          "large_score": 0.06397870294963241,
+          "routed": false,
+          "predicted_bill": false
+        },
+        {
+          "file": "IMG_6665.jpeg",
+          "router_score": 0.002947240136563778,
+          "large_score": 0.03637350065335175,
+          "routed": false,
+          "predicted_bill": false
+        },
+        {
+          "file": "IMG_7683.PNG",
+          "router_score": 0.23700451850891113,
+          "large_score": 0.0007988841594211612,
+          "routed": true,
+          "predicted_bill": false
+        },
+        {
+          "file": "IMG_8410.jpeg",
+          "router_score": 0.0010426550870761275,
+          "large_score": 0.0003948033676046294,
+          "routed": false,
+          "predicted_bill": false
+        },
+        {
+          "file": "IMG_8447.jpeg",
+          "router_score": 0.2424437254667282,
+          "large_score": 0.9563531170694946,
+          "routed": true,
+          "predicted_bill": true
+        },
+        {
+          "file": "d70bf0a6-44fa-48ca-b609-6555bbd994fd.jpg",
+          "router_score": 0.07864954322576523,
+          "large_score": 0.03444866839660479,
+          "routed": false,
+          "predicted_bill": false
+        }
+      ]
+    }
+  },
+  "benchmark": {
+    "router": {
+      "mean_ms": 1.423582890711259,
+      "p50_ms": 1.4153119991533458,
+      "p95_ms": 1.4965624955948442
+    },
+    "large": {
+      "mean_ms": 4.127163689699955,
+      "p50_ms": 4.127603999222629,
+      "p95_ms": 4.331134745734744
+    },
+    "smart_pipeline_mean_ms": 1.9055184331833774
+  },
+  "model_bytes": {
+    "router": 1110448,
+    "large": 3282456,
+    "combined": 4392904
+  }
+}

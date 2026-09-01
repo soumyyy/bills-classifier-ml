@@ -1,0 +1,266 @@
+{
+  "results": {
+    "baseline": {
+      "model": "/Users/soumya/Desktop/Projects/billsapp/bill-classifier/models/experiments/verifier_v2/model.tflite",
+      "alpha_direct": 1.0,
+      "threshold": 0.04790887981653213,
+      "original_test": {
+        "n": 745,
+        "positive": 323,
+        "negative": 422,
+        "recall": 0.9752321981424149,
+        "fpr": 0.22985781990521326,
+        "precision": 0.7645631067961165,
+        "auc": 0.9741170601440875,
+        "tp": 315,
+        "fn": 8,
+        "fp": 97,
+        "tn": 325
+      },
+      "screenshot_test": {
+        "n": 750,
+        "false_positives": 33,
+        "fpr": 0.044,
+        "mean_score": 0.01178072069493525,
+        "p95_score": 0.04480441194027662,
+        "max_score": 0.23839204013347623
+      },
+      "screenshot_bill_test": {
+        "n": 252,
+        "true_positives": 238,
+        "false_negatives": 14,
+        "recall": 0.9444444444444444,
+        "mean_score": 0.5712103069538118,
+        "p05_score": 0.035928815510123974,
+        "min_score": 1.0044126611319372e-05
+      },
+      "screenshot_bill_by_context": {
+        "chat_attachment": {
+          "n": 66,
+          "true_positives": 59,
+          "false_negatives": 7,
+          "recall": 0.8939393939393939,
+          "mean_score": 0.5016411508715575,
+          "p05_score": 0.014036722481250761,
+          "min_score": 1.0044126611319372e-05
+        },
+        "email_attachment": {
+          "n": 62,
+          "true_positives": 59,
+          "false_negatives": 3,
+          "recall": 0.9516129032258065,
+          "mean_score": 0.5280030854346771,
+          "p05_score": 0.05268971771001815,
+          "min_score": 0.014787562191486357
+        },
+        "gallery": {
+          "n": 67,
+          "true_positives": 65,
+          "false_negatives": 2,
+          "recall": 0.9701492537313433,
+          "mean_score": 0.6691571348555275,
+          "p05_score": 0.13403124064207078,
+          "min_score": 0.0100861294195056
+        },
+        "pdf_viewer": {
+          "n": 57,
+          "true_positives": 55,
+          "false_negatives": 2,
+          "recall": 0.9649122807017544,
+          "mean_score": 0.5836309133783767,
+          "p05_score": 0.05919764563441278,
+          "min_score": 0.025814330205321312
+        }
+      },
+      "screenshot_bill_misses": [
+        {
+          "filepath": "data/raw/screenshot_positive_bills/7cb4eeb6ac8a867d5545475c.jpg",
+          "parent_filepath": "data/raw/pool/pos_rvlcdip_invoice_00021.jpg",
+          "context": "gallery",
+          "score": 0.0100861294195056
+        },
+        {
+          "filepath": "data/raw/screenshot_positive_bills/caa8403bf3a544083b3aaee3.jpg",
+          "parent_filepath": "data/raw/pool/pos_rvlcdip_invoice_00217.jpg",
+          "context": "chat_attachment",
+          "score": 0.022121062502264973
+        },
+        {
+          "filepath": "data/raw/screenshot_positive_bills/d412ca80bac1eb3038ed022d.jpg",
+          "parent_filepath": "data/raw/pool/pos_rvlcdip_invoice_00268.jpg",
+          "context": "pdf_viewer",
+          "score": 0.031189350411295894
+        },
+        {
+          "filepath": "data/raw/screenshot_positive_bills/7cbf064dc19c5af19c7a54f7.jpg",
+          "parent_filepath": "data/raw/pool/pos_rvlcdip_invoice_00466.jpg",
+          "context": "chat_attachment",
+          "score": 0.015124710276722913
+        },
+        {
+          "filepath": "data/raw/screenshot_positive_bills/d9efbd22343c28138b608a84.jpg",
+          "parent_filepath": "data/raw/pool/pos_rvlcdip_invoice_00632.jpg",
+          "context": "gallery",
+          "score": 0.01914973370730877
+        },
+        {
+          "filepath": "data/raw/screenshot_positive_bills/f6d397754656b2d10cc80317.jpg",
+          "parent_filepath": "data/raw/pool/pos_rvlcdip_invoice_00740.jpg",
+          "context": "chat_attachment",
+          "score": 0.008114713244140148
+        },
+        {
+          "filepath": "data/raw/screenshot_positive_bills/a395f97476feb1b890674bfa.jpg",
+          "parent_filepath": "data/raw/pool/pos_rvlcdip_invoice_01021.jpg",
+          "context": "email_attachment",
+          "score": 0.014787562191486357
+        },
+        {
+          "filepath": "data/raw/screenshot_positive_bills/fbacf0346dc5a954985109cb.jpg",
+          "parent_filepath": "data/raw/pool/pos_rvlcdip_invoice_01086.jpg",
+          "context": "chat_attachment",
+          "score": 1.0044126611319372e-05
+        },
+        {
+          "filepath": "data/raw/screenshot_positive_bills/35277e0ee457d9929d9eb1ba.jpg",
+          "parent_filepath": "data/raw/pool/pos_rvlcdip_invoice_01158.jpg",
+          "context": "email_attachment",
+          "score": 0.029454903677105904
+        },
+        {
+          "filepath": "data/raw/screenshot_positive_bills/d1daa671443595c11f94a47f.jpg",
+          "parent_filepath": "data/raw/pool/pos_rvlcdip_invoice_01174.jpg",
+          "context": "chat_attachment",
+          "score": 0.007044292986392976
+        },
+        {
+          "filepath": "data/raw/screenshot_positive_bills/a60759a07e07c68c314744b3.jpg",
+          "parent_filepath": "data/raw/pool/pos_rvlcdip_invoice_01219.jpg",
+          "context": "chat_attachment",
+          "score": 0.013674059882760044
+        },
+        {
+          "filepath": "data/raw/screenshot_positive_bills/f2b86f88639b9e5dbe9c3417.jpg",
+          "parent_filepath": "data/raw/pool/pos_rvlcdip_invoice_01610.jpg",
+          "context": "chat_attachment",
+          "score": 0.03980655968189239
+        },
+        {
+          "filepath": "data/raw/screenshot_positive_bills/fd97e27d5fba7a7a07e07c2a.jpg",
+          "parent_filepath": "data/raw/pool/pos_rvlcdip_invoice_01737.jpg",
+          "context": "email_attachment",
+          "score": 0.02945056557655334
+        },
+        {
+          "filepath": "data/raw/screenshot_positive_bills/ca38e96815354bafdb6dfded.jpg",
+          "parent_filepath": "data/raw/pool/syn_hard_neg_00266.jpg",
+          "context": "pdf_viewer",
+          "score": 0.025814330205321312
+        }
+      ]
+    },
+    "candidate": {
+      "model": "models/experiments/verifier_v2_screenshot_balanced/model.tflite",
+      "alpha_direct": 0.8,
+      "threshold": 0.3006436387035705,
+      "original_test": {
+        "n": 745,
+        "positive": 323,
+        "negative": 422,
+        "recall": 0.9752321981424149,
+        "fpr": 0.2014218009478673,
+        "precision": 0.7875,
+        "auc": 0.9760612152069609,
+        "tp": 315,
+        "fn": 8,
+        "fp": 85,
+        "tn": 337
+      },
+      "screenshot_test": {
+        "n": 750,
+        "false_positives": 0,
+        "fpr": 0.0,
+        "mean_score": 0.005995060820232831,
+        "p95_score": 0.021966601339862328,
+        "max_score": 0.21375958346385895
+      },
+      "screenshot_bill_test": {
+        "n": 252,
+        "true_positives": 249,
+        "false_negatives": 3,
+        "recall": 0.9880952380952381,
+        "mean_score": 0.9592980842941428,
+        "p05_score": 0.7940187488214002,
+        "min_score": 0.004088040903209083
+      },
+      "screenshot_bill_by_context": {
+        "chat_attachment": {
+          "n": 66,
+          "true_positives": 65,
+          "false_negatives": 1,
+          "recall": 0.9848484848484849,
+          "mean_score": 0.9443817239882721,
+          "p05_score": 0.6683074431283218,
+          "min_score": 0.004088040903209083
+        },
+        "email_attachment": {
+          "n": 62,
+          "true_positives": 62,
+          "false_negatives": 0,
+          "recall": 1.0,
+          "mean_score": 0.9804156968063119,
+          "p05_score": 0.9062083171243912,
+          "min_score": 0.7968212087366521
+        },
+        "gallery": {
+          "n": 67,
+          "true_positives": 66,
+          "false_negatives": 1,
+          "recall": 0.9850746268656716,
+          "mean_score": 0.9526017205763031,
+          "p05_score": 0.7391971864661087,
+          "min_score": 0.09463865930326795
+        },
+        "pdf_viewer": {
+          "n": 57,
+          "true_positives": 56,
+          "false_negatives": 1,
+          "recall": 0.9824561403508771,
+          "mean_score": 0.9614707890928835,
+          "p05_score": 0.8589299234359858,
+          "min_score": 0.2537270082259715
+        }
+      },
+      "screenshot_bill_misses": [
+        {
+          "filepath": "data/raw/screenshot_positive_bills/7cb4eeb6ac8a867d5545475c.jpg",
+          "parent_filepath": "data/raw/pool/pos_rvlcdip_invoice_00021.jpg",
+          "context": "gallery",
+          "score": 0.09463865930326795
+        },
+        {
+          "filepath": "data/raw/screenshot_positive_bills/fbacf0346dc5a954985109cb.jpg",
+          "parent_filepath": "data/raw/pool/pos_rvlcdip_invoice_01086.jpg",
+          "context": "chat_attachment",
+          "score": 0.004088040903209083
+        },
+        {
+          "filepath": "data/raw/screenshot_positive_bills/ca38e96815354bafdb6dfded.jpg",
+          "parent_filepath": "data/raw/pool/syn_hard_neg_00266.jpg",
+          "context": "pdf_viewer",
+          "score": 0.2537270082259715
+        }
+      ]
+    }
+  },
+  "paired_changes": {
+    "screenshots_fixed": 33,
+    "screenshots_regressed": 0,
+    "screenshot_bills_lost": 0,
+    "screenshot_bills_recovered": 11,
+    "original_negatives_fixed": 18,
+    "original_negatives_regressed": 6,
+    "original_bills_lost": 2,
+    "original_bills_recovered": 2
+  }
+}

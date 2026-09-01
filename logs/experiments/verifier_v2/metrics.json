@@ -1,0 +1,82 @@
+{
+  "architecture": "MobileNetV3Large multi-task",
+  "image_size": 224,
+  "resize_mode": "direct",
+  "preprocessing": "direct resize; raw RGB float [0,255]",
+  "class_names": [
+    "receipt",
+    "invoice",
+    "structured_document",
+    "narrative_document",
+    "advertisement_presentation",
+    "text_scene",
+    "natural_photo"
+  ],
+  "bill_class_indices": [
+    0,
+    1
+  ],
+  "threshold": 0.05131596326828002,
+  "threshold_selection": "minimum validation FPR at recall >= 0.995",
+  "best_epoch": 2,
+  "validation": {
+    "n": 776,
+    "accuracy": 0.8518041237113402,
+    "precision": 0.7379310344827587,
+    "recall": 0.9968944099378882,
+    "fpr": 0.2511013215859031,
+    "auc": 0.9739718718362655,
+    "multiclass_accuracy": 0.7770618556701031,
+    "multiclass_macro_f1": 0.7673782746183537
+  },
+  "test": {
+    "n": 745,
+    "accuracy": 0.8657718120805369,
+    "precision": 0.7753086419753087,
+    "recall": 0.9721362229102167,
+    "fpr": 0.2156398104265403,
+    "auc": 0.9745499097618593,
+    "multiclass_accuracy": 0.7664429530201342,
+    "multiclass_macro_f1": 0.7474938748136212
+  },
+  "recall_constrained_history": [
+    {
+      "epoch": 0,
+      "threshold": 0.04765088856220245,
+      "recall": 0.9968944099378882,
+      "fpr": 0.27312775330396477,
+      "auc": 0.9724532793389333
+    },
+    {
+      "epoch": 1,
+      "threshold": 0.02920323424041271,
+      "recall": 0.9968944099378882,
+      "fpr": 0.2621145374449339,
+      "auc": 0.9735751224450708
+    },
+    {
+      "epoch": 2,
+      "threshold": 0.05131596326828002,
+      "recall": 0.9968944099378882,
+      "fpr": 0.2511013215859031,
+      "auc": 0.9739718718362655
+    }
+  ],
+  "training": {
+    "data_root": "/Users/soumya/Desktop/Projects/billsapp/bill-classifier",
+    "splits_path": "/tmp/verifier_v2_production_local_splits.csv",
+    "image_size": 224,
+    "resize_mode": "direct",
+    "batch_size": 8,
+    "epochs_head": 0,
+    "epochs_finetune": 3,
+    "lr_head": 0.0008,
+    "lr_finetune": 5e-06,
+    "unfreeze_frac": 0.35,
+    "target_validation_recall": 0.995,
+    "target_negative_repeat": 16,
+    "initial_weights": "models/experiments/verifier_v2_replay_prelim/model.keras",
+    "seed": 42,
+    "dry_run": false
+  }
+}

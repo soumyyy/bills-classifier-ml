@@ -1,0 +1,64 @@
+{
+  "results": {
+    "baseline": {
+      "model": "/Users/soumya/Desktop/Projects/billsapp/bill-classifier/models/experiments/verifier_v2/model.tflite",
+      "alpha_direct": 1.0,
+      "threshold": 0.04790887981653213,
+      "original_test": {
+        "n": 745,
+        "positive": 323,
+        "negative": 422,
+        "recall": 0.9752321981424149,
+        "fpr": 0.22985781990521326,
+        "precision": 0.7645631067961165,
+        "auc": 0.9741170601440875,
+        "tp": 315,
+        "fn": 8,
+        "fp": 97,
+        "tn": 325
+      },
+      "screenshot_test": {
+        "n": 750,
+        "false_positives": 33,
+        "fpr": 0.044,
+        "mean_score": 0.01178072069493525,
+        "p95_score": 0.04480441194027662,
+        "max_score": 0.23839204013347623
+      }
+    },
+    "candidate": {
+      "model": "/Users/soumya/Desktop/Projects/billsapp/bill-classifier/models/experiments/verifier_v2_screenshot/model.tflite",
+      "alpha_direct": 0.9500000000000001,
+      "threshold": 0.07239274795726273,
+      "original_test": {
+        "n": 745,
+        "positive": 323,
+        "negative": 422,
+        "recall": 0.9690402476780186,
+        "fpr": 0.2014218009478673,
+        "precision": 0.7864321608040201,
+        "auc": 0.9742931345648761,
+        "tp": 313,
+        "fn": 10,
+        "fp": 85,
+        "tn": 337
+      },
+      "screenshot_test": {
+        "n": 750,
+        "false_positives": 0,
+        "fpr": 0.0,
+        "mean_score": 0.0021772698788810113,
+        "p95_score": 0.009868808706488767,
+        "max_score": 0.0420909720423962
+      }
+    }
+  },
+  "paired_changes": {
+    "screenshots_fixed": 33,
+    "screenshots_regressed": 0,
+    "original_negatives_fixed": 13,
+    "original_negatives_regressed": 1,
+    "original_bills_lost": 2,
+    "original_bills_recovered": 0
+  }
+}
