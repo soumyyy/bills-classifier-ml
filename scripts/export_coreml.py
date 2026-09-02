@@ -16,6 +16,8 @@ import shutil
 import subprocess
 from pathlib import Path
 
+from _common import require_file
+
 import coremltools as ct
 import numpy as np
 import tensorflow as tf
@@ -43,7 +45,7 @@ class _ServingWrapper(tf.Module):
 
 
 def convert() -> ct.models.MLModel:
-    model = tf.keras.models.load_model(MODEL_PATH)
+    model = tf.keras.models.load_model(require_file(MODEL_PATH, "python scripts/train.py"))
     wrapper = _ServingWrapper(model)
 
     export_dir = REPO_ROOT / "models" / "_tmp_savedmodel_coreml"
@@ -61,7 +63,7 @@ def convert() -> ct.models.MLModel:
 
 
 def verify(mlmodel: ct.models.MLModel, paths: list[Path]) -> None:
-    keras_model = tf.keras.models.load_model(MODEL_PATH)
+    keras_model = tf.keras.models.load_model(require_file(MODEL_PATH, "python scripts/train.py"))
     input_name = mlmodel.get_spec().description.input[0].name
 
     print(f"\nVerifying CoreML predictions against Keras on {len(paths)} images:")
@@ -86,10 +88,22 @@ def main() -> None:
     size_bytes = int(subprocess.check_output(["du", "-sk", str(COREML_PATH)]).split()[0]) * 1024
     print(f"Saved {COREML_PATH} ({size_bytes / (1024 * 1024):.2f} MB)")
 
-    with open(REPO_ROOT / "data" / "labeled" / "manifest.csv") as f:
+    manifest = require_file(
+        REPO_ROOT / "data" / "labeled" / "manifest.csv", "python scripts/build_dataset.py"
+    )
+    with open(manifest) as f:
         rows = list(csv.DictReader(f))
     random.Random(2).shuffle(rows)
-    sample = [REPO_ROOT / r["filepath"] for r in rows[:10]]
+    # Only verify against images that are actually present. data/raw is not
+    # tracked, so a clone with the manifest but no image pool would otherwise
+    # die on a bare FileNotFoundError from deep inside PIL.
+    sample = [REPO_ROOT / r["filepath"] for r in rows]
+    sample = [p for p in sample if p.exists()][:10]
+    if not sample:
+        raise SystemExit(
+            "No images from the manifest are present on disk, so the Core ML "
+            "export cannot be verified.\n  Run: python scripts/build_dataset.py"
+        )
     verify(mlmodel, sample)
 
 

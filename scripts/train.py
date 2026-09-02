@@ -21,6 +21,8 @@ import json
 import random
 from pathlib import Path
 
+from _common import require_file
+
 import albumentations as A
 import numpy as np
 import tensorflow as tf
@@ -78,7 +80,7 @@ def configure_memory_growth() -> None:
 
 
 def load_manifest() -> list[dict]:
-    with open(MANIFEST) as f:
+    with open(require_file(MANIFEST, "python scripts/build_dataset.py")) as f:
         rows = list(csv.DictReader(f))
 
     # Small, app-specific regression sets are maintained separately from
@@ -171,7 +173,7 @@ def _albumentations_augment(image: np.ndarray) -> np.ndarray:
 
 
 def build_dataset(
-    rows: list[dict], batch_size: int, augment: bool, shuffle: bool
+    rows: list[dict], batch_size: int, augment: bool, shuffle: bool, seed: int = 0
 ) -> tf.data.Dataset:
     paths = [str(REPO_ROOT / r["filepath"]) for r in rows]
     labels = [float(r["invoice_label"]) for r in rows]
@@ -195,7 +197,11 @@ def build_dataset(
         ds = ds.cache()
 
     if shuffle:
-        ds = ds.shuffle(buffer_size=min(len(rows), 2000), seed=0, reshuffle_each_iteration=True)
+        # seed comes from --seed. It was hardcoded to 0, so two runs with
+        # different seeds got different splits but identical batch ordering -
+        # a seed sweep meant to estimate run-to-run variance was only
+        # measuring half of it.
+        ds = ds.shuffle(buffer_size=min(len(rows), 2000), seed=seed, reshuffle_each_iteration=True)
 
     if augment:
         def _augment(img, label):
@@ -418,7 +424,7 @@ def main() -> None:
         n_mined = sum(r["filepath"] in mined_paths for r in splits["train"])
     print(f"Mined public hard negatives: {n_mined}; effective copies={n_mined * args.mined_negative_repeat}")
 
-    train_ds = build_dataset(train_rows, args.batch_size, augment=True, shuffle=True)
+    train_ds = build_dataset(train_rows, args.batch_size, augment=True, shuffle=True, seed=args.seed)
     val_ds = build_dataset(splits["val"], args.batch_size, augment=False, shuffle=False)
 
     class_weight = compute_class_weight(train_rows)

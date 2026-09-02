@@ -1,23 +1,39 @@
+# Pinned to the versions this pipeline was last trained and exported with,
+# on Python 3.11 (see .python-version). These are exact pins rather than
+# ranges because two of them change results rather than just behaviour:
+#
+#   pillow      - PIL's default resample filter is what every export and
+#                 evaluation path uses to resize to 224x224. A future Pillow
+#                 that changes that default silently changes model scores,
+#                 with nothing failing to indicate it.
+#   albumentations - train.py's AUGMENT pipeline uses num_shadows_limit,
+#                 num_holes_range and quality_range, which are 2.x-only. The
+#                 previous `albumentations>=1.4` would happily resolve to a
+#                 1.x that raises TypeError on import.
+#
+# Regenerate deliberately after upgrading anything, and re-run the export and
+# the app regression set before trusting the numbers.
+
 # --- Teacher labeling (Step 1) ---
-torch>=2.2,<3.0
-transformers>=4.40,<5.0
-huggingface_hub>=0.23
-accelerate>=0.30
+torch==2.13.0
+transformers==4.57.6
+huggingface_hub==0.36.2
+accelerate==1.14.0
 
 # --- Dataset assembly ---
-datasets>=2.19
-pillow>=10.0
-requests>=2.31
+datasets==5.0.1
+pillow==12.3.0
+requests==2.34.2
 
 # --- Student training + export (Step 2/3) ---
-tensorflow>=2.16,<2.17
-tensorflow-metal>=1.1; sys_platform == "darwin" and platform_machine == "arm64"
-coremltools>=7.2
-albumentations>=1.4
+tensorflow==2.16.2
+tensorflow-metal==1.2.0; sys_platform == "darwin" and platform_machine == "arm64"
+coremltools==9.0
+albumentations==2.0.8
 
 # --- Metrics / utils ---
-scikit-learn>=1.4
-pandas>=2.2
-numpy<2.0
-tqdm>=4.66
-matplotlib>=3.8
+scikit-learn==1.9.0
+pandas==3.0.5
+numpy==1.26.4
+tqdm==4.70.0
+matplotlib==3.11.1

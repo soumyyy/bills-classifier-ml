@@ -14,6 +14,8 @@ import csv
 import json
 from pathlib import Path
 
+from _common import require_file
+
 import numpy as np
 import tensorflow as tf
 from PIL import Image
@@ -23,11 +25,51 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 MODEL_PATH = REPO_ROOT / "models" / "invoice_classifier.keras"
 SPLITS_PATH = REPO_ROOT / "data" / "labeled" / "splits.csv"
 IMG_SIZE = 224
-METRICS_PATH = REPO_ROOT / "logs" / "deployment_metrics.json"
+# Calibration writes here. It deliberately does NOT write
+# logs/deployment_metrics.json: that file is the deployment record, holding
+# the operating point the app actually ships plus the app_regression counts
+# that were measured by hand. Calibration output has a different schema
+# entirely, so writing it there replaced the deployed threshold and silently
+# destroyed the provenance. Promoting a calibrated threshold is now an
+# explicit, separate step - see --promote-threshold.
+CALIBRATION_PATH = REPO_ROOT / "logs" / "calibration.json"
+DEPLOYMENT_METRICS_PATH = REPO_ROOT / "logs" / "deployment_metrics.json"
+
+
+def deployed_threshold() -> float | None:
+    """The operating point the app currently ships, if it has been recorded."""
+    if not DEPLOYMENT_METRICS_PATH.exists():
+        return None
+    with open(DEPLOYMENT_METRICS_PATH) as f:
+        return json.load(f).get("threshold")
+
+
+def promote_threshold(threshold: float) -> None:
+    """Adopt a calibrated threshold, preserving the rest of the record.
+
+    Reads, updates one key, writes back - rather than replacing the file -
+    so `selection`, `tflite_test` and the hand-measured `app_regression`
+    counts survive. They are stamped as stale, because they were measured at
+    the previous threshold and no longer describe this one.
+    """
+    record = {}
+    if DEPLOYMENT_METRICS_PATH.exists():
+        with open(DEPLOYMENT_METRICS_PATH) as f:
+            record = json.load(f)
+    previous = record.get("threshold")
+    record["threshold"] = threshold
+    record["selection"] = (
+        f"promoted from calibration (was {previous!r}); "
+        "tflite_test and app_regression below predate this and must be re-run"
+    )
+    DEPLOYMENT_METRICS_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with open(DEPLOYMENT_METRICS_PATH, "w") as f:
+        json.dump(record, f, indent=2)
+    print(f"Promoted threshold {previous!r} -> {threshold:.4f} in {DEPLOYMENT_METRICS_PATH}")
 
 
 def load_split(split: str) -> list[dict]:
-    with open(SPLITS_PATH) as f:
+    with open(require_file(SPLITS_PATH, "python scripts/train.py")) as f:
         return [r for r in csv.DictReader(f) if r["split"] == split]
 
 
@@ -84,9 +126,20 @@ def metrics_at(y_true: np.ndarray, y_prob: np.ndarray, threshold: float) -> dict
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--target-recall", type=float, default=0.99)
+    parser.add_argument(
+        "--promote-threshold",
+        action="store_true",
+        help=(
+            "Also update the threshold in logs/deployment_metrics.json. Every "
+            "other field in that file is preserved, but the recorded "
+            "tflite_test and app_regression results were measured at the old "
+            "threshold and will no longer describe the new one - re-run the "
+            "export and the app regression set after promoting."
+        ),
+    )
     args = parser.parse_args()
 
-    model = tf.keras.models.load_model(MODEL_PATH)
+    model = tf.keras.models.load_model(require_file(MODEL_PATH, "python scripts/train.py"))
     val_rows = load_split("val")
     y_val, p_val = predict_all(model, val_rows)
     print(f"n_val={len(y_val)}, n_positive={int(y_val.sum())}")
@@ -113,8 +166,8 @@ def main() -> None:
         "test": metrics_at(y_test, p_test, threshold),
         "test_at_0_5": metrics_at(y_test, p_test, 0.5),
     }
-    METRICS_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with open(METRICS_PATH, "w") as f:
+    CALIBRATION_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with open(CALIBRATION_PATH, "w") as f:
         json.dump(report, f, indent=2)
 
     print(
@@ -124,7 +177,15 @@ def main() -> None:
     print("Held-out test metrics at that fixed threshold:")
     for name, value in report["test"].items():
         print(f"  {name}: {value}")
-    print(f"Saved deployment metrics to {METRICS_PATH}")
+    print(f"Saved calibration to {CALIBRATION_PATH}")
+
+    if args.promote_threshold:
+        promote_threshold(threshold)
+    else:
+        print(
+            f"\nThe app still ships {deployed_threshold()!r}. To adopt "
+            f"{threshold:.4f}, re-run with --promote-threshold."
+        )
 
 
 if __name__ == "__main__":
