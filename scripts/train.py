@@ -35,6 +35,9 @@ from sklearn.model_selection import StratifiedGroupKFold
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 MANIFEST = REPO_ROOT / "data" / "labeled" / "manifest.csv"
+TARGET_HARD_NEGATIVES = REPO_ROOT / "data" / "labeled" / "target_hard_negatives.csv"
+PUBLIC_HARD_NEGATIVES = REPO_ROOT / "data" / "labeled" / "public_hard_negatives.csv"
+MINED_HARD_NEGATIVES = REPO_ROOT / "data" / "labeled" / "mined_hard_negatives.csv"
 SPLITS_PATH = REPO_ROOT / "data" / "labeled" / "splits.csv"
 CHECKPOINT_DIR = REPO_ROOT / "models" / "checkpoints"
 FINAL_MODEL_PATH = REPO_ROOT / "models" / "invoice_classifier.keras"
@@ -76,7 +79,41 @@ def configure_memory_growth() -> None:
 
 def load_manifest() -> list[dict]:
     with open(MANIFEST) as f:
-        return list(csv.DictReader(f))
+        rows = list(csv.DictReader(f))
+
+    # Small, app-specific regression sets are maintained separately from
+    # the reproducible public-data manifest. Their explicit split prevents
+    # a user photo from silently moving between train and test after a seed
+    # or dataset change.
+    if TARGET_HARD_NEGATIVES.exists():
+        with open(TARGET_HARD_NEGATIVES) as f:
+            for row in csv.DictReader(f):
+                rows.append(
+                    {
+                        "filepath": row["filepath"],
+                        "source": "target_hard_negative",
+                        "predicted_class": "user_labeled_non_bill",
+                        "invoice_label": "0",
+                        "confidence": "1.0000",
+                        "source_doc": row["filepath"],
+                        "forced_split": row["split"],
+                    }
+                )
+    if PUBLIC_HARD_NEGATIVES.exists():
+        with open(PUBLIC_HARD_NEGATIVES) as f:
+            for row in csv.DictReader(f):
+                rows.append(
+                    {
+                        "filepath": row["filepath"],
+                        "source": row["source"],
+                        "predicted_class": "public_non_bill",
+                        "invoice_label": "0",
+                        "confidence": "1.0000",
+                        "source_doc": row["source_doc"],
+                        "forced_split": row["split"],
+                    }
+                )
+    return rows
 
 
 def make_splits(rows: list[dict], seed: int) -> dict[str, list[dict]]:
@@ -84,6 +121,8 @@ def make_splits(rows: list[dict], seed: int) -> dict[str, list[dict]]:
     and any synthetic composites derived from it always land in the same
     split -- otherwise the model could be tested on a warped/composited
     near-duplicate of something it trained on."""
+    forced_rows = [r for r in rows if r.get("forced_split")]
+    rows = [r for r in rows if not r.get("forced_split")]
     labels = [int(r["invoice_label"]) for r in rows]
     groups = [r.get("source_doc") or r["filepath"] for r in rows]
 
@@ -98,6 +137,15 @@ def make_splits(rows: list[dict], seed: int) -> dict[str, list[dict]]:
     val_idx, test_idx = next(splitter2.split(temp_rows, temp_labels, temp_groups))
     val_rows = [temp_rows[i] for i in val_idx]
     test_rows = [temp_rows[i] for i in test_idx]
+
+    rows_by_split = {"train": train_rows, "val": val_rows, "test": test_rows}
+    for row in forced_rows:
+        split = row["forced_split"]
+        if split not in rows_by_split:
+            raise ValueError(f"Invalid forced split {split!r} for {row['filepath']}")
+        if not (REPO_ROOT / row["filepath"]).exists():
+            raise FileNotFoundError(REPO_ROOT / row["filepath"])
+        rows_by_split[split].append(row)
 
     # Sanity check: no source_doc group should ever straddle two splits.
     split_of_group: dict[str, str] = {}
@@ -115,7 +163,7 @@ def make_splits(rows: list[dict], seed: int) -> dict[str, list[dict]]:
             for r in split_rows:
                 writer.writerow([r["filepath"], r["invoice_label"], split_name, r.get("source_doc") or r["filepath"]])
 
-    return {"train": train_rows, "val": val_rows, "test": test_rows}
+    return rows_by_split
 
 
 def _albumentations_augment(image: np.ndarray) -> np.ndarray:
@@ -132,7 +180,10 @@ def build_dataset(
 
     def _load(path, label):
         img_bytes = tf.io.read_file(path)
-        img = tf.io.decode_jpeg(img_bytes, channels=3)
+        # Target-domain examples include phone screenshots (PNG) as well as
+        # camera JPEGs, so decode by content instead of assuming JPEG.
+        img = tf.io.decode_image(img_bytes, channels=3, expand_animations=False)
+        img.set_shape((None, None, 3))
         img = tf.image.resize(img, (IMG_SIZE, IMG_SIZE))
         img = tf.cast(img, tf.uint8)
         return img, label
@@ -161,13 +212,24 @@ def build_dataset(
 
 
 def build_model() -> tf.keras.Model:
+    cached_weights = (
+        Path.home()
+        / ".keras"
+        / "models"
+        / "weights_mobilenet_v3_small_224_1.0_float_no_top_v2.h5"
+    )
     base = tf.keras.applications.MobileNetV3Small(
         input_shape=(IMG_SIZE, IMG_SIZE, 3),
         include_top=False,
-        weights="imagenet",
+        # Loading an existing cache explicitly also supports offline retrains;
+        # Keras otherwise attempts a network request even when this compatible
+        # weight file is already present locally.
+        weights=None if cached_weights.exists() else "imagenet",
         include_preprocessing=True,  # model expects raw [0,255] float input
         pooling="avg",
     )
+    if cached_weights.exists():
+        base.load_weights(cached_weights)
     base.trainable = False
 
     x = tf.keras.layers.Dropout(0.2)(base.output)
@@ -182,6 +244,55 @@ def compute_class_weight(rows: list[dict]) -> dict[int, float]:
     n_pos = labels.sum()
     n_neg = n - n_pos
     return {0: n / (2 * n_neg), 1: n / (2 * n_pos)}
+
+
+def repeat_target_hard_negatives(rows: list[dict], repeat: int) -> list[dict]:
+    """Oversample scarce app-specific errors so each receives fresh image
+    augmentation several times per epoch without duplicating files."""
+    if repeat < 1:
+        raise ValueError("hard-negative-repeat must be at least 1")
+    hard_rows = [r for r in rows if r.get("source") == "target_hard_negative"]
+    return rows + hard_rows * (repeat - 1)
+
+
+def sample_public_hard_negatives(
+    rows: list[dict], fraction: float, seed: int
+) -> list[dict]:
+    """Keep a deterministic, source-balanced fraction of the new public
+    negatives in training. Validation and test retain every imported image;
+    only the training mixture is thinned to avoid overwhelming positives and
+    shifting the deployed score calibration."""
+    if not 0.0 < fraction <= 1.0:
+        raise ValueError("public-negative-train-fraction must be in (0, 1]")
+
+    public_by_source: dict[str, list[dict]] = {}
+    retained = []
+    for row in rows:
+        source = row.get("source", "")
+        if source == "hiertext_text_scene" or source.startswith("rvl_targeted_"):
+            public_by_source.setdefault(source, []).append(row)
+        else:
+            retained.append(row)
+
+    for source, source_rows in sorted(public_by_source.items()):
+        random.Random(f"{seed}:{source}").shuffle(source_rows)
+        keep = max(1, round(len(source_rows) * fraction))
+        retained.extend(source_rows[:keep])
+    return retained
+
+
+def repeat_mined_hard_negatives(rows: list[dict], repeat: int) -> list[dict]:
+    """Replay the public training negatives that the previous model scored
+    highest. Mining only from the training split preserves validation/test
+    independence while teaching a sharper document-vs-bill boundary."""
+    if repeat < 1:
+        raise ValueError("mined-negative-repeat must be at least 1")
+    if not MINED_HARD_NEGATIVES.exists():
+        return rows
+    with open(MINED_HARD_NEGATIVES) as f:
+        mined_paths = {r["filepath"] for r in csv.DictReader(f)}
+    mined_rows = [r for r in rows if r["filepath"] in mined_paths]
+    return rows + mined_rows * (repeat - 1)
 
 
 def metrics_list() -> list:
@@ -245,6 +356,24 @@ def main() -> None:
     parser.add_argument("--lr-finetune", type=float, default=1e-5)
     parser.add_argument("--unfreeze-frac", type=float, default=0.25)
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument(
+        "--hard-negative-repeat",
+        type=int,
+        default=20,
+        help="effective copies of each target hard negative per training epoch",
+    )
+    parser.add_argument(
+        "--mined-negative-repeat",
+        type=int,
+        default=1,
+        help="effective copies of each model-mined public hard negative (1 disables replay)",
+    )
+    parser.add_argument(
+        "--public-negative-train-fraction",
+        type=float,
+        default=0.35,
+        help="source-balanced fraction of imported public hard negatives used for training",
+    )
     parser.add_argument("--limit", type=int, default=None, help="cap total rows (debug/smoke test)")
     args = parser.parse_args()
 
@@ -261,10 +390,38 @@ def main() -> None:
         f"Splits: train={len(splits['train'])} val={len(splits['val'])} test={len(splits['test'])}"
     )
 
-    train_ds = build_dataset(splits["train"], args.batch_size, augment=True, shuffle=True)
+    train_rows = sample_public_hard_negatives(
+        splits["train"], args.public_negative_train_fraction, args.seed
+    )
+    n_public_train = sum(
+        r.get("source") == "hiertext_text_scene"
+        or r.get("source", "").startswith("rvl_targeted_")
+        for r in train_rows
+    )
+    print(
+        f"Public hard negatives retained for training: {n_public_train} "
+        f"({args.public_negative_train_fraction:.0%} source-balanced sample)"
+    )
+    train_rows = repeat_target_hard_negatives(train_rows, args.hard_negative_repeat)
+    train_rows = repeat_mined_hard_negatives(train_rows, args.mined_negative_repeat)
+    n_hard_train = sum(r.get("source") == "target_hard_negative" for r in splits["train"])
+    print(
+        f"Target hard negatives: {n_hard_train} train originals, "
+        f"{sum(r.get('source') == 'target_hard_negative' for r in splits['val'])} val, "
+        f"{sum(r.get('source') == 'target_hard_negative' for r in splits['test'])} test; "
+        f"effective train copies={n_hard_train * args.hard_negative_repeat}"
+    )
+    n_mined = 0
+    if MINED_HARD_NEGATIVES.exists():
+        with open(MINED_HARD_NEGATIVES) as f:
+            mined_paths = {r["filepath"] for r in csv.DictReader(f)}
+        n_mined = sum(r["filepath"] in mined_paths for r in splits["train"])
+    print(f"Mined public hard negatives: {n_mined}; effective copies={n_mined * args.mined_negative_repeat}")
+
+    train_ds = build_dataset(train_rows, args.batch_size, augment=True, shuffle=True)
     val_ds = build_dataset(splits["val"], args.batch_size, augment=False, shuffle=False)
 
-    class_weight = compute_class_weight(splits["train"])
+    class_weight = compute_class_weight(train_rows)
     print(f"Class weight: {class_weight}")
 
     model, base = build_model()
@@ -298,9 +455,14 @@ def main() -> None:
     base.trainable = True
     n_layers = len(base.layers)
     n_frozen = int(n_layers * (1 - args.unfreeze_frac))
-    for layer in base.layers[:n_frozen]:
-        layer.trainable = False
-    print(f"Unfroze {n_layers - n_frozen}/{n_layers} backbone layers")
+    n_trainable = 0
+    for index, layer in enumerate(base.layers):
+        # Updating small-batch BatchNorm statistics can destroy useful
+        # ImageNet features during fine-tuning. Keep every BN layer frozen
+        # while unfreezing only the tail's convolutional/dense parameters.
+        layer.trainable = index >= n_frozen and not isinstance(layer, tf.keras.layers.BatchNormalization)
+        n_trainable += int(layer.trainable)
+    print(f"Unfroze {n_trainable}/{n_layers} non-BatchNorm backbone layers")
 
     model.compile(
         optimizer=tf.keras.optimizers.Adam(learning_rate=args.lr_finetune),

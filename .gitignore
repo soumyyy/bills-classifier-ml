@@ -1,6 +1,11 @@
 .venv/
 __pycache__/
 *.pyc
-/data/
+!/data/
+/data/*
+!/data/labeled/
+/data/labeled/*
+!/data/labeled/target_hard_negatives.csv
+!/data/labeled/public_hard_negatives.csv
 models/checkpoints/
 .DS_Store

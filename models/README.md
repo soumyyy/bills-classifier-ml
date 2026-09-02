@@ -1,69 +1,88 @@
 # invoice_classifier
 
-Binary invoice/bill image classifier. MobileNetV3-Small backbone (ImageNet
-pretrained), sigmoid head, fine-tuned per `scripts/train.py`.
+Binary invoice/receipt classifier using a MobileNetV3-Small backbone and a
+sigmoid head. The August 2026 model was retrained after correcting 818 noisy
+targets: CORD and SROIE are receipt datasets, but the old RVL-CDIP teacher has
+no receipt class and had incorrectly labeled many of them as advertisements or
+forms. Source ground truth is now the target; teacher predictions remain audit
+metadata.
 
 ## Exported files
 
 | File | Format | Size | Use |
-|---|---|---|---|
-| `invoice_classifier.keras` | Keras 3 | 9.9MB | Source of truth for re-export/fine-tuning |
-| `invoice_classifier.tflite` | TFLite, dynamic-range quantized | 1.05MB | Android |
-| `invoice_classifier.mlpackage` | Core ML (mlprogram) | 1.98MB | iOS |
+|---|---|---:|---|
+| `invoice_classifier.keras` | Keras 3 | 9.9 MB | Re-export/fine-tuning source |
+| `invoice_classifier.tflite` | Dynamic-range quantized TFLite | 1.05 MB | On-device app model |
+| `invoice_classifier.mlpackage` | Core ML mlprogram | 1.98 MB | Native iOS integration |
 
-**Quantization note:** the TFLite export uses *dynamic-range* quantization
-(int8 weights, float32 activations), not full-integer. Full-integer
-quantization was tested and rejected -- it collapsed recall from 99.1% to
-69.0% on the held-out test set (MobileNetV3's hard-swish/squeeze-excite
-blocks are sensitive to naive activation quantization), which directly
-violates this app's "never miss a real bill" requirement. Dynamic-range
-lands at essentially the same size (~1.1MB either way) while preserving
-recall (98.8%) almost exactly. See `scripts/export_tflite.py`'s docstring
-and its built-in `evaluate_on_test_split()` check, which fails loudly if a
-future retrain/re-export drops recall below 95%.
+Dynamic-range quantization keeps float activations and int8 weights. Full-int8
+activation quantization was rejected because it substantially reduced recall.
 
-The Core ML export needed a workaround too: `coremltools` can't convert a
-Keras model handed to it directly (Keras 3's `model.export()` emits
-multiple serving signatures; coremltools' TF2 loader only accepts one), so
-both exports go through a manually wrapped single-signature
-`tf.saved_model.save()` instead. See the export scripts for details.
+## Input and output
 
-## Input / preprocessing
-- Resize to 224x224 RGB.
-- Feed raw pixel values in **[0, 255]** as float32 -- do **not** manually
-  normalize. `include_preprocessing=True` on the MobileNetV3Small backbone
-  bakes the correct rescaling into the model itself.
-- **TFLite**: input tensor `[1, 224, 224, 3]` float32, values in `[0, 255]`.
-- **Core ML**: input is declared as `ImageType` (name `x`), so pass a
-  224x224 RGB image directly (`UIImage`/`CVPixelBuffer`) -- no manual
-  array conversion or normalization needed, Core ML handles the resize-to-
-  tensor step itself as part of the `ImageType` input.
+- Input: `[1, 224, 224, 3]` float32 RGB in raw `[0, 255]` values.
+- Resize directly to 224×224; do not normalize. MobileNetV3 preprocessing is
+  embedded in the model.
+- Output: one sigmoid probability, where `1` is invoice/receipt and `0` is not.
 
-## Output
-- Single sigmoid probability in [0, 1]: `invoice_label = 1` means "is a
-  bill/invoice", `0` means "is not".
+## Deployment threshold: 0.15
 
-## Decision threshold: use 0.15, not 0.5
+The app uses 0.15 as its operating point after regression testing showed that
+the old recall-maximizing 0.054 cutoff admitted too many non-bills. The fixed
+0.15 cutoff is evaluated on the untouched test split and on the app-specific
+`TestPhotos` and `Negative` folders. Metrics are in
+`logs/deployment_metrics.json`.
 
-The default 0.5 cutoff is precision-optimized. This app's priority is to
-**never miss a real bill** (false negatives are much more costly than false
-positives), so the recommended operating point trades precision for recall:
+| Operating point | Accuracy | Precision | Recall | AUC |
+|---|---:|---:|---:|---:|
+| TFLite, threshold 0.15 | 85.13% | 80.12% | 96.75% | 93.64% |
+| Keras, threshold 0.5 | 83.77% | 90.49% | 78.50% | 93.38% |
 
-| Threshold | Recall | Precision |
-|---|---|---|
-| 0.50 (default) | ~81% | ~79% |
-| 0.152 | 99.1% | 60.0% |
-| 0.107 | 100% | 57.3% |
+The app still favors recall because candidates pass through OCR and keyword
+validation. Re-run calibration and both app-specific regression folders after
+every retrain; do not change the app cutoff from calibration alone.
 
-Measured on a 730-image held-out test split (323 positives), leakage-checked
-(synthetic examples grouped with their source document so no near-duplicate
-crosses the train/test boundary -- see `scripts/tune_threshold.py`).
-
-**Recommendation: threshold = 0.15.** Missing about 1% of held-out bills
-in exchange for far fewer than 0.5's false negatives, while keeping the
-false-positive rate manageable (~40%, i.e. roughly 4 in 10 flagged images
-are not actually bills -- acceptable for a "flag for review" UX). Rerun
-`scripts/tune_threshold.py` after any retrain to reconfirm this number.
+The current TFLite model detects all 17/17 `TestPhotos` receipts and rejects
+11/17 `Negative` images at 0.15 (the prior model rejected 7/17). Three negative
+images were reserved as an untouched hard-negative holdout; all three remain
+false positives, so broader negative data is still required before claiming
+that failure mode is solved.
 
 ## Label mapping
-`0` = not invoice/bill, `1` = invoice/bill.
+
+`0` = not invoice/receipt, `1` = invoice/receipt.
+
+## Legacy MobileNetV3-Large verifier
+
+`invoice_verifier_large.tflite` is the original second-stage, seven-class
+verifier retained for reproducibility. It ran only after the binary model's
+0.15 gate, using receipt + invoice probability at threshold
+`0.008874409832060335`. The production app no longer bundles this artifact.
+
+The verifier output order is receipt, invoice, structured document, narrative
+document, advertisement/presentation, text scene, and natural photo. The
+dynamic-range-quantized TFLite artifact is 3,278,952 bytes and averaged 4.51 ms
+per inference on the training Mac's CPU.
+
+On the leakage-safe 921-image test split, the cascade reached 84.15% accuracy,
+74.29% precision, 97.26% recall, and 95.97% AUC. This improves the same binary
+gate's 80.24% accuracy and 69.45% precision while retaining nearly all of its
+97.51% recall. App regressions were 16/17 `TestPhotos`, 13/17 `Negative`, and
+8/13 `N2`. Because it was too permissive, this model was replaced in the app
+by `experiments/verifier_v2_screenshot_balanced/model.tflite`. Full legacy
+measurements and per-image results are in
+`logs/verifier_large_deployment_metrics.json`.
+
+## Production balanced MobileNetV3-Large
+
+The app now uses
+`experiments/verifier_v2_screenshot_balanced/model_single_score.tflite` as a
+single-pass candidate filter. It is exported from the trained two-head model,
+with the calibrated `0.8 * direct + 0.2 * (receipt + invoice)` fusion baked into
+one scalar TFLite output. The threshold remains `0.3006436387035705`. Keeping
+one native output buffer avoids the cross-platform inference crash observed
+with the otherwise equivalent two-output artifact.
+
+On the 1,747-image combined held-out test, it reached 98.09% recall, 7.25%
+false-positive rate, and 86.90% precision. See
+`logs/experiments/verifier_v2_screenshot_balanced/calibration_balanced.json`.

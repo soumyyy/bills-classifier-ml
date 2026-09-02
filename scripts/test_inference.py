@@ -12,6 +12,7 @@ Usage:
 
 import argparse
 import csv
+import json
 import random
 from pathlib import Path
 
@@ -23,7 +24,15 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 TFLITE_PATH = REPO_ROOT / "models" / "invoice_classifier.tflite"
 MANIFEST = REPO_ROOT / "data" / "labeled" / "manifest.csv"
 IMG_SIZE = 224
-DECISION_THRESHOLD = 0.15  # see models/README.md
+DECISION_THRESHOLD = 0.15  # app operating point; can be overridden on the CLI
+DEPLOYMENT_METRICS_PATH = REPO_ROOT / "logs" / "deployment_metrics.json"
+
+
+def deployment_threshold() -> float:
+    if DEPLOYMENT_METRICS_PATH.exists():
+        with open(DEPLOYMENT_METRICS_PATH) as f:
+            return float(json.load(f)["threshold"])
+    return DECISION_THRESHOLD
 
 
 def default_sample_images(n_per_class: int = 3, seed: int = 3) -> list[tuple[Path, int]]:
@@ -49,6 +58,7 @@ def predict(interpreter: tf.lite.Interpreter, path: Path) -> float:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--images", nargs="*", help="Specific image paths to test (skips the default sample)")
+    parser.add_argument("--threshold", type=float, help="override the calibrated deployment threshold")
     args = parser.parse_args()
 
     if not TFLITE_PATH.exists():
@@ -56,6 +66,7 @@ def main() -> None:
 
     interpreter = tf.lite.Interpreter(model_path=str(TFLITE_PATH))
     interpreter.allocate_tensors()
+    threshold = args.threshold if args.threshold is not None else deployment_threshold()
 
     if args.images:
         items = [(Path(p), None) for p in args.images]
@@ -66,7 +77,7 @@ def main() -> None:
     n_correct, n_total = 0, 0
     for path, true_label in items:
         prob = predict(interpreter, path)
-        pred_label = int(prob >= DECISION_THRESHOLD)
+        pred_label = int(prob >= threshold)
         pred_str = "invoice/bill" if pred_label else "not invoice/bill"
 
         line = f"  {path.name:40s} prob={prob:.4f}  ->  {pred_str}"
@@ -78,7 +89,7 @@ def main() -> None:
         print(line)
 
     if n_total:
-        print(f"\n{n_correct}/{n_total} correct at threshold={DECISION_THRESHOLD}")
+        print(f"\n{n_correct}/{n_total} correct at threshold={threshold:.4f}")
 
 
 if __name__ == "__main__":

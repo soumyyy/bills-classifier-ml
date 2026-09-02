@@ -3,22 +3,18 @@ inference (Step 3, Android path).
 
 Uses post-training DYNAMIC-RANGE quantization (int8 weights, float32
 activations computed on the fly) rather than full-integer quantization.
-This was a deliberate choice after measuring both on the full held-out test
-set: full-integer quantization (int8 weights AND activations, calibrated
-against a 200-image representative dataset) collapsed recall from 99.1% to
-69.0% and AUC from 0.899 to 0.845 -- MobileNetV3's hard-swish activations
-and squeeze-excite blocks are known to be sensitive to naive activation
-quantization. Dynamic-range quantization lands at essentially the same
-model size (~1.1MB either way) while preserving recall (98.8%) and AUC
-(0.894) almost exactly -- given this app's hard requirement to not miss
-real bills, that's the only one worth shipping. Re-run this comparison
-(see git history for the eval script) if the architecture changes.
+The original model's full-integer export substantially reduced recall;
+dynamic-range quantization is therefore retained and every new export is
+checked on the full test split. Re-run a full-int8 comparison if the
+architecture or converter changes.
 
 Usage:
     python scripts/export_tflite.py
 """
 
+import argparse
 import csv
+import json
 import random
 import shutil
 import time
@@ -36,7 +32,8 @@ MANIFEST = REPO_ROOT / "data" / "labeled" / "manifest.csv"
 SPLITS_PATH = REPO_ROOT / "data" / "labeled" / "splits.csv"
 IMG_SIZE = 224
 TARGET_MAX_BYTES = 3 * 1024 * 1024  # README target: under 3MB
-DECISION_THRESHOLD = 0.15  # see models/README.md -- recall-optimized, not the 0.5 default
+DECISION_THRESHOLD = 0.15  # app operating point; see logs/deployment_metrics.json
+DEPLOYMENT_METRICS_PATH = REPO_ROOT / "logs" / "deployment_metrics.json"
 MIN_ACCEPTABLE_RECALL = 0.95  # quantization must not meaningfully erode the recall guarantee
 
 
@@ -45,6 +42,13 @@ def sample_paths(n: int, seed: int = 1) -> list[Path]:
         rows = list(csv.DictReader(f))
     random.Random(seed).shuffle(rows)
     return [REPO_ROOT / r["filepath"] for r in rows[:n]]
+
+
+def deployment_threshold() -> float:
+    if DEPLOYMENT_METRICS_PATH.exists():
+        with open(DEPLOYMENT_METRICS_PATH) as f:
+            return float(json.load(f)["threshold"])
+    return DECISION_THRESHOLD
 
 
 def convert() -> bytes:
@@ -90,7 +94,7 @@ def benchmark(interpreter: tf.lite.Interpreter, paths: list[Path], n_runs: int =
     print(f"  mean={times.mean():.2f}ms  p50={np.median(times):.2f}ms  p95={np.percentile(times, 95):.2f}ms")
 
 
-def evaluate_on_test_split(interpreter: tf.lite.Interpreter) -> None:
+def evaluate_on_test_split(interpreter: tf.lite.Interpreter, threshold: float) -> None:
     """Verify quantization didn't erode recall -- the whole reason dynamic-range
     was chosen over full-integer quantization in the first place."""
     with open(SPLITS_PATH) as f:
@@ -102,13 +106,13 @@ def evaluate_on_test_split(interpreter: tf.lite.Interpreter) -> None:
         img = np.array(Image.open(REPO_ROOT / r["filepath"]).convert("RGB").resize((IMG_SIZE, IMG_SIZE)), dtype=np.float32)
         probs.append(run_tflite(interpreter, img))
     probs = np.array(probs)
-    y_pred = (probs >= DECISION_THRESHOLD).astype(int)
+    y_pred = (probs >= threshold).astype(int)
 
     acc = accuracy_score(y_true, y_pred)
     auc = roc_auc_score(y_true, probs)
     recall = recall_score(y_true, y_pred)
 
-    print(f"\nTFLite accuracy on held-out test split (n={len(y_true)}, threshold={DECISION_THRESHOLD}):")
+    print(f"\nTFLite accuracy on held-out test split (n={len(y_true)}, threshold={threshold:.4f}):")
     print(f"  accuracy={acc:.4f}  auc={auc:.4f}  recall={recall:.4f}")
     if recall < MIN_ACCEPTABLE_RECALL:
         print(
@@ -117,7 +121,23 @@ def evaluate_on_test_split(interpreter: tf.lite.Interpreter) -> None:
         )
 
 
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--threshold",
+        type=float,
+        default=None,
+        help="Decision threshold used for the export check (defaults to deployment metrics).",
+    )
+    return parser.parse_args()
+
+
 def main() -> None:
+    args = parse_args()
+    threshold = deployment_threshold() if args.threshold is None else args.threshold
+    if not 0.0 <= threshold <= 1.0:
+        raise ValueError("--threshold must be between 0 and 1")
+
     tflite_model = convert()
     TFLITE_PATH.parent.mkdir(parents=True, exist_ok=True)
     TFLITE_PATH.write_bytes(tflite_model)
@@ -131,7 +151,7 @@ def main() -> None:
     interpreter.allocate_tensors()
 
     benchmark(interpreter, sample_paths(50))
-    evaluate_on_test_split(interpreter)
+    evaluate_on_test_split(interpreter, threshold)
 
 
 if __name__ == "__main__":

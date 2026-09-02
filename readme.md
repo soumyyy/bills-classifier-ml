@@ -3,8 +3,8 @@
 A lightweight on-device binary image classifier that answers one question:
 **is this photo a bill/invoice, or not?**
 
-MobileNetV3-Small backbone, trained on an auto-labeled dataset built from
-public document datasets plus synthetic "handheld phone photo" examples,
+MobileNetV3-Small backbone, trained on a teacher-audited dataset built from
+public invoice/receipt datasets plus synthetic "handheld phone photo" examples,
 exported to both TFLite (Android) and Core ML (iOS).
 
 ## Status: done through export
@@ -14,10 +14,10 @@ build log) are complete:
 
 | | |
 |---|---|
-| Dataset | 7,300 images, auto-labeled via `microsoft/dit-base-finetuned-rvlcdip` |
-| Model | MobileNetV3-Small, 82% test accuracy / 90.0% AUC |
-| Deployment threshold | 0.15 (recall-tuned -- see `models/README.md`) |
-| TFLite | `models/invoice_classifier.tflite`, 1.05MB, ~1.5ms CPU inference |
+| Dataset | 7,317 images, including 17 app-specific hard negatives |
+| Model | MobileNetV3-Small, 83.8% test accuracy / 93.4% AUC at threshold 0.5 |
+| Deployment threshold | 0.15 (app operating point; 96.75% held-out recall) |
+| TFLite | `models/invoice_classifier.tflite`, 1.05MB, ~1.7ms CPU inference |
 | Core ML | `models/invoice_classifier.mlpackage`, 1.98MB |
 
 ## Quick start
@@ -28,9 +28,9 @@ pip install -r requirements.txt
 
 python scripts/build_dataset.py all --target-per-class 3000
 python scripts/synthesize_hard_examples.py --n-positive 900 --n-negative 400
-python scripts/train.py --epochs-head 8 --epochs-finetune 12
-python scripts/tune_threshold.py --target-recall 1.0
-python scripts/export_tflite.py
+python scripts/train.py --epochs-head 8 --epochs-finetune 12 --hard-negative-repeat 20
+python scripts/tune_threshold.py --target-recall 0.99
+python scripts/export_tflite.py --threshold 0.15
 python scripts/export_coreml.py
 python scripts/test_inference.py
 ```

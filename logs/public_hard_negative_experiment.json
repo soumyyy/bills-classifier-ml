@@ -1,0 +1,45 @@
+{
+  "status": "rejected_not_deployed",
+  "threshold": 0.15,
+  "dataset": {
+    "imported_negatives": 1950,
+    "rvl_cdip_targeted": 1350,
+    "hiertext_text_scenes": 600,
+    "forced_split_counts": {
+      "train": 1532,
+      "val": 231,
+      "test": 187
+    }
+  },
+  "baseline_model_on_expanded_test": {
+    "n": 920,
+    "accuracy": 0.7989130434782609,
+    "precision": 0.6923076923076923,
+    "recall": 0.9675,
+    "auc": 0.925173076923077
+  },
+  "full_public_training_candidate": {
+    "n": 920,
+    "accuracy": 0.8532608695652174,
+    "precision": 0.800453514739229,
+    "recall": 0.8825,
+    "auc": 0.9312,
+    "app_regression": {
+      "positive_detected": "17/17",
+      "negative_rejected": "11/17",
+      "n2_negative_rejected": "8/13"
+    },
+    "rejection_reason": "Recall fell below the 0.95 deployment floor and N2 improved by only one image."
+  },
+  "balanced_training_checkpoint": {
+    "public_train_fraction": 0.35,
+    "artifact": "checkpoint_only",
+    "n": 920,
+    "accuracy": 0.8510869565217392,
+    "precision": 0.7700205338809035,
+    "recall": 0.9375,
+    "auc": 0.9285336538461539,
+    "rejection_reason": "Recall remained below the 0.95 deployment floor."
+  },
+  "selected_model": "pre_experiment_model_restored"
+}

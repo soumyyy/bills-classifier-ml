@@ -22,9 +22,10 @@ python scripts/build_dataset.py label --batch-size 16
 (`build_dataset.py all` runs both phases in sequence.) Streams images from
 5 public sources (RVL-CDIP invoices, CORD receipts, SROIE receipts, other
 RVL-CDIP document classes, COCO photos), saves them to `data/raw/pool/`,
-then runs each through the `microsoft/dit-base-finetuned-rvlcdip` teacher
-model to assign a real `invoice_label` -- not just trusting the source.
-Writes `data/labeled/manifest.csv`.
+then runs each through the `microsoft/dit-base-finetuned-rvlcdip` teacher.
+Known source semantics provide the target label (CORD/SROIE are receipts,
+RVL-CDIP invoice is positive, and non-invoice/COCO are negative); teacher
+predictions are retained as audit metadata. Writes `data/labeled/manifest.csv`.
 
 ### 2. Synthesize hard examples
 
@@ -39,8 +40,24 @@ bills. See "Challenges" below. Appends to the same manifest.
 
 ### 3. Train
 
+An optional targeted-negative import is available before training:
+
 ```
-python scripts/train.py --epochs-head 8 --epochs-finetune 12 --batch-size 16
+python scripts/import_public_hard_negatives.py
+```
+
+It adds 1,950 reproducible negatives: 1,350 samples from nine confusing
+RVL-CDIP document classes (reports, specifications, budgets, questionnaires,
+presentations, resumes, and similar pages) plus 600 text-heavy natural scenes
+from HierText/Open Images. Downloaded pixels stay ignored under `data/raw/`;
+the tracked `data/labeled/public_hard_negatives.csv` records source, lineage,
+and fixed 80/10/10 splits. See the official [RVL-CDIP dataset page](https://adamharley.com/rvl-cdip/)
+and [HierText repository](https://github.com/google-research-datasets/hiertext)
+for source details and usage terms.
+
+```
+python scripts/train.py --epochs-head 8 --epochs-finetune 12 --batch-size 16 \
+  --hard-negative-repeat 20 --public-negative-train-fraction 0.35
 ```
 
 MobileNetV3-Small, freeze-then-finetune schedule, class-weighted loss,
@@ -51,18 +68,36 @@ leakage-safe grouped train/val/test split. Outputs
 ### 4. Tune the decision threshold
 
 ```
-python scripts/tune_threshold.py --target-recall 1.0
+python scripts/tune_threshold.py --target-recall 0.99
 ```
 
 The default 0.5 cutoff is precision-optimized; this app's priority is to
-never miss a real bill. Prints the precision/recall tradeoff at several
-thresholds and recommends one. Current recommendation: **0.15** (see
-`models/README.md`).
+never miss a real bill. The script selects a threshold on validation, prints
+the precision/recall tradeoff, then evaluates it once on the untouched test
+split. Calibration remains diagnostic; the app's regression-tested operating
+point is **0.15** (see `models/README.md`).
+
+### Optional: train the MobileNetV3-Large multiclass verifier
+
+```
+python scripts/train_verifier_large.py --epochs-head 8 \
+  --epochs-finetune 12 --batch-size 8 \
+  --target-validation-recall 0.99 --target-hard-negative-repeat 8
+python scripts/export_verifier_large.py
+```
+
+This produces a seven-class verifier for a two-stage cascade without changing
+the existing high-recall binary gate. Outputs are
+`models/invoice_verifier_large.keras`,
+`models/invoice_verifier_large.tflite`, `logs/verifier_large_metrics.json`,
+and `logs/verifier_large_deployment_metrics.json`. The export script evaluates
+the TFLite cascade on the held-out split and all three app regression folders.
+Use `--skip-convert` to evaluate an existing export.
 
 ### 5. Export for on-device use
 
 ```
-python scripts/export_tflite.py   # -> models/invoice_classifier.tflite
+python scripts/export_tflite.py --threshold 0.15  # -> models/invoice_classifier.tflite
 python scripts/export_coreml.py   # -> models/invoice_classifier.mlpackage
 ```
 
@@ -75,22 +110,33 @@ python scripts/test_inference.py --images path/to/your/photo.jpg
 
 ## Results
 
-- **Dataset**: 7,300 images (6,000 real across 5 sources + 1,300 synthetic
-  hard examples), 44%/56% class balance.
-- **Model**: 82% test accuracy, 90.0% AUC on a leakage-checked 730-image
+- **Dataset**: 7,317 images (6,000 real across 5 sources + 1,300 synthetic
+  hard examples + 17 app-specific hard negatives).
+- **Model**: 83.8% test accuracy, 93.4% AUC on a leakage-checked 733-image
   held-out split.
-- **At the deployment threshold (0.15)**: 98.8% recall -- essentially
-  never misses a real bill, at the cost of a higher false-positive rate
-  (acceptable for a "flag for review" UX).
-- **TFLite**: 1.05MB, ~1.5ms CPU inference, recall preserved.
+- **At the deployment threshold (0.15)**: TFLite held-out recall is 96.75%,
+  precision is 80.12%, and accuracy is 85.13%.
+- **TFLite**: 1.05MB, ~1.7ms CPU inference, 93.64% AUC.
 - **Core ML**: 1.98MB, predictions verified to match the source Keras
   model closely.
-- **Manual testing on real handheld photos**: 7/7 real bills correctly
-  caught; non-bills correctly rejected except for two known failure
-  categories (below).
+- **App regression folders**: 17/17 real bills detected and 11/17 supplied
+  non-bills rejected at 0.15, improved from 7/17 negative rejections.
+- **Targeted public-data experiment**: the first candidate improved broad-test
+  precision but reduced receipt recall to 88.25%; a source-balanced retry
+  reached 93.75%. Both failed the 95% recall release gate, so neither replaced
+  the deployed model. Full measurements are in
+  `logs/public_hard_negative_experiment.json`.
 
 ## Challenges
 
+- **Teacher-label mismatch for receipts.** RVL-CDIP has an invoice class but
+  no receipt class, so treating its top class as ground truth mislabeled many
+  genuine CORD/SROIE receipts as advertisements or forms. Source semantics now
+  provide the training targets, teacher outputs remain audit metadata, and 818
+  existing targets plus their synthetic lineages were repaired.
+- **Threshold leakage.** The original deployment cutoff was selected on the
+  test set. Threshold calibration now uses validation only and the fixed result
+  is evaluated once on the untouched test split.
 - **Real-world generalization gap.** The first trained model (clean
   scans + well-lit photos only) missed real handheld phone photos of
   bills -- dim lighting, tilt, hand/glass occlusion. Fixed by
@@ -127,11 +173,10 @@ python scripts/test_inference.py --images path/to/your/photo.jpg
 
 ## Known limitations
 
-- Two failure modes found via manual testing, not yet fixed: tabular/grid
-  documents (exam papers, mark sheets) and financial-chart screenshots
-  both get occasionally misclassified as bills -- both resemble a bill's
-  row-of-numbers layout. Worth targeted hard-negative mining if this
-  matters for the app's real usage.
-- The deployment threshold (0.15) trades precision for recall
-  deliberately; roughly 4 in 10 images flagged as "bill" may not be one.
+- Text-heavy forms, bill-like medical documents, summaries, and screenshots
+  can still be false positives. The three untouched app-specific negative
+  holdouts all remain false positives; they must not be folded into training
+  merely to make the same regression folder pass.
+- The deployment threshold (0.15) still trades precision for recall;
+  approximately 2 in 10 positives are false alarms on the broad held-out set.
   Fine for a "flag for review" UX, not for silent auto-filing.

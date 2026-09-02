@@ -1,5 +1,4 @@
-"""Assemble a raw image pool from public datasets and auto-label it with a
-teacher model (Step 1 of the README).
+"""Assemble a raw image pool and validate its labels with a teacher model.
 
 Runs as two phases so the heavy ML libraries are only loaded when needed
 (the machine this trains on has 8GB of RAM, so we keep peak memory low by
@@ -8,7 +7,10 @@ never holding more than one image / one small batch in memory at a time):
   assemble  - streams images from HF datasets straight to disk (no torch
               needed), writing data/raw/pool_manifest.csv
   label     - loads the DiT teacher model once, runs it over the pool in
-              small batches, writing data/labeled/manifest.csv
+              small batches, and records its prediction as label metadata;
+              the dataset's known source label remains the training target
+  reconcile - repairs an existing manifest produced by an older version
+              that incorrectly treated the teacher prediction as truth
   all       - runs both phases in sequence (default)
 
 Usage:
@@ -29,7 +31,29 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 RAW_DIR = REPO_ROOT / "data" / "raw" / "pool"
 POOL_MANIFEST = REPO_ROOT / "data" / "raw" / "pool_manifest.csv"
 LABELED_MANIFEST = REPO_ROOT / "data" / "labeled" / "manifest.csv"
+SPLITS_PATH = REPO_ROOT / "data" / "labeled" / "splits.csv"
 MAX_SIDE = 512  # cap stored image size to keep disk/IO light
+
+# These datasets have ground-truth semantics at the source level. In
+# particular, DiT/RVL-CDIP has a separate "invoice" class but no receipt
+# class, so using `predicted_class == "invoice"` as the target mislabeled
+# more than half of CORD/SROIE receipts as negatives. The teacher prediction
+# is still useful metadata for auditing difficult samples, but it must not
+# override known ground truth.
+SOURCE_LABELS = {
+    "cord_receipts": 1,
+    "sroie_receipts": 1,
+    "rvlcdip_invoice": 1,
+    "rvlcdip_other": 0,
+    "coco_photos": 0,
+}
+
+
+def label_for_source(source: str) -> int:
+    try:
+        return SOURCE_LABELS[source]
+    except KeyError as exc:
+        raise ValueError(f"No ground-truth label configured for source {source!r}") from exc
 
 
 @dataclass
@@ -193,6 +217,8 @@ def label_pool(batch_size: int, device: str) -> None:
 
     LABELED_MANIFEST.parent.mkdir(parents=True, exist_ok=True)
     counts = {0: 0, 1: 0}
+    teacher_agreements = 0
+    teacher_disagreements = 0
 
     with open(LABELED_MANIFEST, "w", newline="") as out_f:
         writer = csv.writer(out_f)
@@ -218,7 +244,12 @@ def label_pool(batch_size: int, device: str) -> None:
 
             for row, prob in zip(valid_rows, probs):
                 top_idx = int(torch.argmax(prob))
-                invoice_label = int(top_idx == invoice_id)
+                teacher_label = int(top_idx == invoice_id)
+                invoice_label = label_for_source(row["source"])
+                if teacher_label == invoice_label:
+                    teacher_agreements += 1
+                else:
+                    teacher_disagreements += 1
                 writer.writerow(
                     [
                         row["filepath"],
@@ -236,12 +267,74 @@ def label_pool(batch_size: int, device: str) -> None:
             print(f"  labeled {done}/{len(rows)}")
 
     print(f"\nLabeling done: invoice=1 -> {counts[1]}, invoice=0 -> {counts[0]}")
+    print(
+        "Teacher agreement with source ground truth: "
+        f"{teacher_agreements}/{teacher_agreements + teacher_disagreements} "
+        f"({teacher_disagreements} disagreements retained as audit metadata)"
+    )
     print(f"Manifest: {LABELED_MANIFEST}")
+
+
+def reconcile_manifest_labels() -> None:
+    """Repair targets in an existing manifest without rerunning the teacher.
+
+    Synthetic examples inherit the corrected target of their lineage root.
+    This also repairs old "hard negatives" synthesized from receipts that
+    the teacher had incorrectly labeled as non-invoices.
+    """
+    with open(LABELED_MANIFEST) as f:
+        rows = list(csv.DictReader(f))
+
+    base_rows = {r["filepath"]: r for r in rows if not r["source"].startswith("synthetic_")}
+    changed = 0
+    counts = {0: 0, 1: 0}
+
+    for row in rows:
+        if row["source"].startswith("synthetic_"):
+            source_doc = base_rows.get(row["source_doc"])
+            if source_doc is None:
+                raise ValueError(f"Missing lineage root {row['source_doc']!r} for {row['filepath']!r}")
+            label = label_for_source(source_doc["source"])
+            row["source"] = "synthetic_hard_pos" if label else "synthetic_hard_neg"
+        else:
+            label = label_for_source(row["source"])
+
+        if row["invoice_label"] != str(label):
+            changed += 1
+        row["invoice_label"] = str(label)
+        counts[label] += 1
+
+    temp_path = LABELED_MANIFEST.with_suffix(".csv.tmp")
+    with open(temp_path, "w", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=rows[0].keys())
+        writer.writeheader()
+        writer.writerows(rows)
+    temp_path.replace(LABELED_MANIFEST)
+
+    # Preserve existing split membership for before/after comparisons while
+    # keeping its copied labels consistent with the repaired manifest.
+    if SPLITS_PATH.exists():
+        label_by_path = {r["filepath"]: r["invoice_label"] for r in rows}
+        with open(SPLITS_PATH) as f:
+            split_rows = list(csv.DictReader(f))
+        for split_row in split_rows:
+            split_row["invoice_label"] = label_by_path[split_row["filepath"]]
+        split_temp_path = SPLITS_PATH.with_suffix(".csv.tmp")
+        with open(split_temp_path, "w", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=split_rows[0].keys())
+            writer.writeheader()
+            writer.writerows(split_rows)
+        split_temp_path.replace(SPLITS_PATH)
+
+    print(
+        f"Reconciled {len(rows)} rows ({changed} labels corrected): "
+        f"invoice=1 -> {counts[1]}, invoice=0 -> {counts[0]}"
+    )
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("phase", choices=["assemble", "label", "all"], nargs="?", default="all")
+    parser.add_argument("phase", choices=["assemble", "label", "reconcile", "all"], nargs="?", default="all")
     parser.add_argument("--target-per-class", type=int, default=3000)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--batch-size", type=int, default=16)
@@ -252,6 +345,8 @@ def main() -> None:
         assemble_pool(args.target_per_class, args.seed)
     if args.phase in ("label", "all"):
         label_pool(args.batch_size, args.device)
+    if args.phase == "reconcile":
+        reconcile_manifest_labels()
 
 
 if __name__ == "__main__":

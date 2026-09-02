@@ -1,0 +1,36 @@
+{
+  "architecture": "MobileNetV3Large",
+  "class_names": [
+    "receipt",
+    "invoice",
+    "structured_document",
+    "narrative_document",
+    "advertisement_presentation",
+    "text_scene",
+    "natural_photo"
+  ],
+  "bill_class_indices": [
+    0,
+    1
+  ],
+  "threshold": 0.008874409832060335,
+  "threshold_selection": "validation recall >= 0.99",
+  "validation": {
+    "n": 963,
+    "multiclass_accuracy": 0.6853582554517134,
+    "multiclass_macro_f1": 0.6969160122021355,
+    "bill_accuracy": 0.778816199376947,
+    "bill_precision": 0.6545454545454545,
+    "bill_recall": 0.99,
+    "bill_auc": 0.9528818827708703
+  },
+  "test": {
+    "n": 921,
+    "multiclass_accuracy": 0.6862106406080347,
+    "multiclass_macro_f1": 0.7007902475332985,
+    "bill_accuracy": 0.7947882736156352,
+    "bill_precision": 0.6821305841924399,
+    "bill_recall": 0.9900249376558603,
+    "bill_auc": 0.9551793592940724
+  }
+}
