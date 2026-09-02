@@ -20,6 +20,8 @@ import shutil
 import time
 from pathlib import Path
 
+from _common import check_split_matches, require_file
+
 import numpy as np
 import tensorflow as tf
 from PIL import Image
@@ -34,14 +36,23 @@ IMG_SIZE = 224
 TARGET_MAX_BYTES = 3 * 1024 * 1024  # README target: under 3MB
 DECISION_THRESHOLD = 0.15  # app operating point; see logs/deployment_metrics.json
 DEPLOYMENT_METRICS_PATH = REPO_ROOT / "logs" / "deployment_metrics.json"
+FINAL_METRICS_PATH = REPO_ROOT / "logs" / "final_metrics.json"
 MIN_ACCEPTABLE_RECALL = 0.95  # quantization must not meaningfully erode the recall guarantee
 
 
 def sample_paths(n: int, seed: int = 1) -> list[Path]:
-    with open(MANIFEST) as f:
+    with open(require_file(MANIFEST, "python scripts/build_dataset.py")) as f:
         rows = list(csv.DictReader(f))
     random.Random(seed).shuffle(rows)
     return [REPO_ROOT / r["filepath"] for r in rows[:n]]
+
+
+def recorded_run() -> dict | None:
+    """The run fingerprint saved when the current model was trained."""
+    if not FINAL_METRICS_PATH.exists():
+        return None
+    with open(FINAL_METRICS_PATH) as f:
+        return json.load(f).get("run")
 
 
 def deployment_threshold() -> float:
@@ -52,7 +63,7 @@ def deployment_threshold() -> float:
 
 
 def convert() -> bytes:
-    model = tf.keras.models.load_model(MODEL_PATH)
+    model = tf.keras.models.load_model(require_file(MODEL_PATH, "python scripts/train.py"))
 
     # TFLiteConverter.from_keras_model() hits an MLIR bug on this TF version
     # ("missing attribute 'value'" while freezing a conv ReadVariableOp,
@@ -97,7 +108,7 @@ def benchmark(interpreter: tf.lite.Interpreter, paths: list[Path], n_runs: int =
 def evaluate_on_test_split(interpreter: tf.lite.Interpreter, threshold: float) -> None:
     """Verify quantization didn't erode recall -- the whole reason dynamic-range
     was chosen over full-integer quantization in the first place."""
-    with open(SPLITS_PATH) as f:
+    with open(require_file(SPLITS_PATH, "python scripts/train.py")) as f:
         rows = [r for r in csv.DictReader(f) if r["split"] == "test"]
 
     y_true = np.array([int(r["invoice_label"]) for r in rows])
@@ -114,15 +125,30 @@ def evaluate_on_test_split(interpreter: tf.lite.Interpreter, threshold: float) -
 
     print(f"\nTFLite accuracy on held-out test split (n={len(y_true)}, threshold={threshold:.4f}):")
     print(f"  accuracy={acc:.4f}  auc={auc:.4f}  recall={recall:.4f}")
-    if recall < MIN_ACCEPTABLE_RECALL:
-        print(
-            f"  WARNING: recall {recall:.4f} is below the {MIN_ACCEPTABLE_RECALL} floor -- "
-            "quantization may have eroded the recall guarantee this app depends on."
-        )
+    return recall
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--allow-split-mismatch",
+        action="store_true",
+        help="Evaluate even when splits.csv no longer matches the split the model was trained on. The resulting metrics describe a different split from the one the model saw.",
+    )
+    parser.add_argument(
+        "--sample-seed",
+        type=int,
+        default=1,
+        help="Seed for the benchmark image sample (was hardcoded).",
+    )
+    parser.add_argument(
+        "--allow-recall-regression",
+        action="store_true",
+        help=(
+            f"Export even when test recall is below {MIN_ACCEPTABLE_RECALL}. "
+            "Without this the model is not written at all."
+        ),
+    )
     parser.add_argument(
         "--threshold",
         type=float,
@@ -138,20 +164,37 @@ def main() -> None:
     if not 0.0 <= threshold <= 1.0:
         raise ValueError("--threshold must be between 0 and 1")
 
-    tflite_model = convert()
-    TFLITE_PATH.parent.mkdir(parents=True, exist_ok=True)
-    TFLITE_PATH.write_bytes(tflite_model)
+    check_split_matches(recorded_run(), SPLITS_PATH, allow_mismatch=args.allow_split_mismatch)
 
-    size_bytes = TFLITE_PATH.stat().st_size
+    tflite_model = convert()
+
+    size_bytes = len(tflite_model)
     size_mb = size_bytes / (1024 * 1024)
     status = "OK" if size_bytes <= TARGET_MAX_BYTES else "OVER TARGET"
-    print(f"\nSaved {TFLITE_PATH} ({size_mb:.2f} MB) -- target <3MB: {status}")
+    print(f"\nConverted model is {size_mb:.2f} MB -- target <3MB: {status}")
 
+    # Evaluated from the in-memory model, before anything is written. The
+    # recall check below used to run after write_bytes and only print a
+    # warning, so a quantized model that had eroded the recall guarantee was
+    # already on disk - and the script still exited 0, so CI would not have
+    # noticed either.
     interpreter = tf.lite.Interpreter(model_content=tflite_model)
     interpreter.allocate_tensors()
+    benchmark(interpreter, sample_paths(50, seed=args.sample_seed))
+    recall = evaluate_on_test_split(interpreter, threshold)
 
-    benchmark(interpreter, sample_paths(50))
-    evaluate_on_test_split(interpreter, threshold)
+    if recall < MIN_ACCEPTABLE_RECALL and not args.allow_recall_regression:
+        raise SystemExit(
+            f"\nAborted: recall {recall:.4f} is below the "
+            f"{MIN_ACCEPTABLE_RECALL} floor, so {TFLITE_PATH.name} was NOT "
+            "written and the existing model is untouched. Quantization has "
+            "eroded the recall guarantee the app depends on. Re-run with "
+            "--allow-recall-regression to export anyway."
+        )
+
+    TFLITE_PATH.parent.mkdir(parents=True, exist_ok=True)
+    TFLITE_PATH.write_bytes(tflite_model)
+    print(f"\nSaved {TFLITE_PATH}")
 
 
 if __name__ == "__main__":

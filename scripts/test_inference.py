@@ -16,6 +16,8 @@ import json
 import random
 from pathlib import Path
 
+from _common import require_file
+
 import numpy as np
 import tensorflow as tf
 from PIL import Image
@@ -36,7 +38,7 @@ def deployment_threshold() -> float:
 
 
 def default_sample_images(n_per_class: int = 3, seed: int = 3) -> list[tuple[Path, int]]:
-    with open(MANIFEST) as f:
+    with open(require_file(MANIFEST, "python scripts/build_dataset.py")) as f:
         rows = list(csv.DictReader(f))
     positives = [r for r in rows if r["invoice_label"] == "1" and not r["source"].startswith("synthetic_")]
     negatives = [r for r in rows if r["invoice_label"] == "0" and not r["source"].startswith("synthetic_")]
@@ -59,6 +61,10 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--images", nargs="*", help="Specific image paths to test (skips the default sample)")
     parser.add_argument("--threshold", type=float, help="override the calibrated deployment threshold")
+    parser.add_argument(
+        "--sample-seed", type=int, default=3,
+        help="Seed for the default image sample (was hardcoded).",
+    )
     args = parser.parse_args()
 
     if not TFLITE_PATH.exists():
@@ -71,7 +77,7 @@ def main() -> None:
     if args.images:
         items = [(Path(p), None) for p in args.images]
     else:
-        items = default_sample_images()
+        items = default_sample_images(seed=args.sample_seed)
         print("No --images given; sampling from the labeled dataset:\n")
 
     n_correct, n_total = 0, 0
