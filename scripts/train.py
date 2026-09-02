@@ -45,6 +45,9 @@ CHECKPOINT_DIR = REPO_ROOT / "models" / "checkpoints"
 FINAL_MODEL_PATH = REPO_ROOT / "models" / "invoice_classifier.keras"
 CURVES_PATH = REPO_ROOT / "logs" / "training_curves.png"
 METRICS_PATH = REPO_ROOT / "logs" / "final_metrics.json"
+DEPLOYMENT_METRICS_PATH = REPO_ROOT / "logs" / "deployment_metrics.json"
+# Used only when no deployment record exists yet; the app ships 0.15.
+DEFAULT_DECISION_THRESHOLD = 0.15
 
 IMG_SIZE = 224
 # Max decoded images to hold in the .cache() RAM buffer for a split, to
@@ -336,13 +339,32 @@ def plot_curves(histories: list[tuple[str, tf.keras.callbacks.History]]) -> None
     print(f"Saved training curves to {CURVES_PATH}")
 
 
-def evaluate_on_test(model: tf.keras.Model, test_rows: list[dict], batch_size: int) -> dict:
+def deployment_threshold() -> float:
+    """The operating point the app actually ships.
+
+    Metrics used to be reported at a hardcoded 0.5, which is not a threshold
+    this project deploys at - so the headline accuracy and recall in
+    readme.md described behaviour no user ever saw. Reading the deployed
+    value keeps the reported numbers and the shipped ones the same thing.
+    """
+    if DEPLOYMENT_METRICS_PATH.exists():
+        with open(DEPLOYMENT_METRICS_PATH) as f:
+            recorded = json.load(f).get("threshold")
+            if recorded is not None:
+                return float(recorded)
+    return DEFAULT_DECISION_THRESHOLD
+
+
+def evaluate_on_test(
+    model: tf.keras.Model, test_rows: list[dict], batch_size: int, threshold: float,
+) -> dict:
     test_ds = build_dataset(test_rows, batch_size=batch_size, augment=False, shuffle=False)
     y_true = np.array([int(r["invoice_label"]) for r in test_rows])
     y_prob = model.predict(test_ds, verbose=0).ravel()
-    y_pred = (y_prob >= 0.5).astype(int)
+    y_pred = (y_prob >= threshold).astype(int)
 
     metrics = {
+        "threshold": threshold,
         "accuracy": float(accuracy_score(y_true, y_pred)),
         "precision": float(precision_score(y_true, y_pred)),
         "recall": float(recall_score(y_true, y_pred)),
@@ -362,6 +384,16 @@ def main() -> None:
     parser.add_argument("--lr-finetune", type=float, default=1e-5)
     parser.add_argument("--unfreeze-frac", type=float, default=0.25)
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument(
+        "--eval-threshold",
+        type=float,
+        default=None,
+        help=(
+            "Decision threshold for the final test metrics. Defaults to the "
+            "deployed operating point in logs/deployment_metrics.json, so the "
+            "reported numbers describe what the app actually does."
+        ),
+    )
     parser.add_argument(
         "--hard-negative-repeat",
         type=int,
@@ -488,7 +520,11 @@ def main() -> None:
     plot_curves([("head", history_head), ("finetune", history_finetune)])
 
     print("\n=== Final evaluation on held-out test split ===")
-    metrics = evaluate_on_test(model, splits["test"], args.batch_size)
+    eval_threshold = (
+        deployment_threshold() if args.eval_threshold is None else args.eval_threshold
+    )
+    print(f"Evaluating at threshold {eval_threshold:.4f} (the deployed operating point)")
+    metrics = evaluate_on_test(model, splits["test"], args.batch_size, eval_threshold)
     for k, v in metrics.items():
         print(f"  {k}: {v}")
     # Recorded alongside the metrics so a result can be traced back to the
