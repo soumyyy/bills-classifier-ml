@@ -15,8 +15,8 @@ build log) are complete:
 | | |
 |---|---|
 | Dataset | 7,317 images, including 17 app-specific hard negatives |
-| Model | MobileNetV3-Small, 83.8% test accuracy / 93.4% AUC at threshold 0.5 |
-| Deployment threshold | 0.15 (app operating point; 96.75% held-out recall) |
+| Model | MobileNetV3-Small. At the deployed threshold: **85.1% accuracy, 96.75% recall, 80.1% precision, 93.6% AUC** (TFLite, held-out test n=733) |
+| Deployment threshold | 0.15 — the app operating point, and what the figures above are measured at |
 | TFLite | `models/invoice_classifier.tflite`, 1.05MB, ~1.7ms CPU inference |
 | Core ML | `models/invoice_classifier.mlpackage`, 1.98MB |
 
