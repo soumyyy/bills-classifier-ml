@@ -1,0 +1,104 @@
+{
+  "architecture": "MobileNetV3Large multi-task",
+  "image_size": 224,
+  "resize_mode": "direct",
+  "preprocessing": "direct resize; raw RGB float [0,255]",
+  "class_names": [
+    "receipt",
+    "invoice",
+    "structured_document",
+    "narrative_document",
+    "advertisement_presentation",
+    "text_scene",
+    "natural_photo"
+  ],
+  "bill_class_indices": [
+    0,
+    1
+  ],
+  "threshold": 0.06252989917993544,
+  "threshold_selection": "minimum validation FPR at recall >= 0.995",
+  "best_epoch": 3,
+  "validation": {
+    "n": 1526,
+    "accuracy": 0.9305373525557011,
+    "precision": 0.7535211267605634,
+    "recall": 0.9968944099378882,
+    "fpr": 0.0872093023255814,
+    "auc": 0.9911449412929986,
+    "multiclass_accuracy": 0.8761467889908257,
+    "multiclass_macro_f1": 0.8066032655865224
+  },
+  "test": {
+    "n": 1495,
+    "accuracy": 0.934448160535117,
+    "precision": 0.7791563275434243,
+    "recall": 0.9721362229102167,
+    "fpr": 0.07593856655290103,
+    "auc": 0.9901679011823877,
+    "multiclass_accuracy": 0.8775919732441472,
+    "multiclass_macro_f1": 0.7959529049790043
+  },
+  "recall_constrained_history": [
+    {
+      "epoch": 0,
+      "threshold": 0.06484177708625792,
+      "recall": 0.9968944099378882,
+      "fpr": 0.09219269102990033,
+      "auc": 0.989971317141619
+    },
+    {
+      "epoch": 1,
+      "threshold": 0.05591855570673942,
+      "recall": 0.9968944099378882,
+      "fpr": 0.09136212624584718,
+      "auc": 0.9905026722519139
+    },
+    {
+      "epoch": 2,
+      "threshold": 0.060671553015708916,
+      "recall": 0.9968944099378882,
+      "fpr": 0.09053156146179402,
+      "auc": 0.9907012855698397
+    },
+    {
+      "epoch": 3,
+      "threshold": 0.06252989917993544,
+      "recall": 0.9968944099378882,
+      "fpr": 0.0872093023255814,
+      "auc": 0.9911449412929986
+    },
+    {
+      "epoch": 4,
+      "threshold": 0.05778886750340461,
+      "recall": 0.9968944099378882,
+      "fpr": 0.08803986710963455,
+      "auc": 0.9914957388415427
+    },
+    {
+      "epoch": 5,
+      "threshold": 0.056653164327144616,
+      "recall": 0.9968944099378882,
+      "fpr": 0.0888704318936877,
+      "auc": 0.9915034770227605
+    }
+  ],
+  "training": {
+    "data_root": "/Users/soumya/Desktop/Projects/billsapp/bill-classifier",
+    "splits_path": "data/labeled/verifier_v2_screenshot_splits.csv",
+    "image_size": 224,
+    "resize_mode": "direct",
+    "batch_size": 8,
+    "epochs_head": 0,
+    "epochs_finetune": 6,
+    "lr_head": 0.0008,
+    "lr_finetune": 3e-06,
+    "unfreeze_frac": 0.2,
+    "target_validation_recall": 0.995,
+    "target_negative_repeat": 1,
+    "initial_weights": "models/experiments/verifier_v2/model.keras",
+    "seed": 42,
+    "experiment_name": "verifier_v2_screenshot",
+    "dry_run": false
+  }
+}

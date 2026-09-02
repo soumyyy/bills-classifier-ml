@@ -1,0 +1,64 @@
+{
+  "architecture": "MobileNetV3Small smart multi-task router",
+  "outputs": [
+    "bill_prob",
+    "document_class",
+    "capture_context"
+  ],
+  "class_names": [
+    "receipt",
+    "invoice",
+    "structured_document",
+    "narrative_document",
+    "advertisement_presentation",
+    "text_scene",
+    "natural_photo"
+  ],
+  "context_names": [
+    "direct",
+    "screenshot"
+  ],
+  "threshold": 0.2398375570774078,
+  "best_epoch": null,
+  "validation": {
+    "n": 1778,
+    "threshold": 0.2398375570774078,
+    "accuracy": 0.9235095613048369,
+    "precision": 0.8101983002832861,
+    "recall": 0.9965156794425087,
+    "fpr": 0.11129568106312292,
+    "auc": 0.987919189229861,
+    "document_accuracy": 0.8633295838020247,
+    "context_accuracy": 0.9668166479190101
+  },
+  "test": {
+    "n": 1747,
+    "threshold": 0.2398375570774078,
+    "accuracy": 0.9261591299370349,
+    "precision": 0.8279411764705882,
+    "recall": 0.9791304347826087,
+    "fpr": 0.09982935153583618,
+    "auc": 0.9866018697136074,
+    "document_accuracy": 0.8551803091013166,
+    "context_accuracy": 0.9730967372638809
+  },
+  "tflite_size_bytes": 1110448,
+  "training": {
+    "data_root": "/Users/soumya/Desktop/Projects/billsapp/bill-classifier",
+    "splits_path": "/Users/soumya/Desktop/Projects/billsapp/bill-classifier/data/labeled/verifier_v2_screenshot_balanced_splits.csv",
+    "initial_model": "/Users/soumya/Desktop/Projects/billsapp/bill-classifier/models/invoice_classifier.keras",
+    "experiment_name": "smart_router_v1",
+    "image_size": 224,
+    "batch_size": 24,
+    "epochs_head": 2,
+    "epochs_finetune": 6,
+    "lr_head": 0.0005,
+    "lr_finetune": 8e-06,
+    "unfreeze_frac": 0.28,
+    "target_validation_recall": 0.995,
+    "seed": 73,
+    "dry_run": false,
+    "finalize_only": true
+  },
+  "recall_constrained_history": []
+}

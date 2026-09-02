@@ -1,11 +1,43 @@
 .venv/
 __pycache__/
 *.pyc
+.DS_Store
+
+# ── Datasets ─────────────────────────────────────────────────────
+# data/raw/ is ~1.8GB of JPEGs and matches no .gitattributes rule, so it
+# would land in git objects rather than LFS and permanently bloat the
+# remote. Ignore the tree, but keep every CSV under data/labeled/ - the
+# manifest and the split files are what actually *define* a training run,
+# and without them a clone cannot reproduce or even check a result.
 !/data/
 /data/*
 !/data/labeled/
 /data/labeled/*
-!/data/labeled/target_hard_negatives.csv
-!/data/labeled/public_hard_negatives.csv
+!/data/labeled/*.csv
+
+# ── Model artifacts ──────────────────────────────────────────────
+# models/experiments/ is ~211MB of abandoned experiment lineages. Exactly
+# one file in there is production: the verifier the app ships (see
+# BillMgrApp/assets/models/README.md). Track that one via LFS, drop the rest.
 models/checkpoints/
-.DS_Store
+/models/experiments/*
+!/models/experiments/verifier_v2_screenshot_balanced/
+/models/experiments/verifier_v2_screenshot_balanced/*
+!/models/experiments/verifier_v2_screenshot_balanced/model_single_score.tflite
+
+# ── App regression photo sets ────────────────────────────────────
+# ~32MB of phone photos used as the app-side regression suite that
+# models/README.md says to re-run on every retrain. Deliberately NOT
+# tracked - keep them backed up out of band.
+/N2/
+/Negative/
+/TestPhotos/
+
+# Experiment models kept at the repo root. These are NOT what the app ships:
+# BillMgrApp/assets/models/invoice_verifier_large.tflite is sha256 4b7bb71e...,
+# which is models/experiments/verifier_v2_screenshot_balanced/
+# model_single_score.tflite - tracked above. The file here is fa4153f0..., a
+# different artifact from the verifier_large run. Ignored so a stray `git add`
+# cannot commit 31MB of experiment output.
+/models/invoice_verifier_large.keras
+/models/invoice_verifier_large.tflite

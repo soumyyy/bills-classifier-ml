@@ -1,0 +1,84 @@
+{
+  "results": {
+    "baseline": {
+      "model": "/Users/soumya/Desktop/Projects/billsapp/bill-classifier/models/experiments/verifier_v2/model.tflite",
+      "alpha_direct": 1.0,
+      "threshold": 0.04790887981653213,
+      "original_test": {
+        "n": 745,
+        "positive": 323,
+        "negative": 422,
+        "recall": 0.9752321981424149,
+        "fpr": 0.22985781990521326,
+        "precision": 0.7645631067961165,
+        "auc": 0.9741170601440875,
+        "tp": 315,
+        "fn": 8,
+        "fp": 97,
+        "tn": 325
+      },
+      "screenshot_test": {
+        "n": 750,
+        "false_positives": 33,
+        "fpr": 0.044,
+        "mean_score": 0.01178072069493525,
+        "p95_score": 0.04480441194027662,
+        "max_score": 0.23839204013347623
+      },
+      "screenshot_bill_test": {
+        "n": 252,
+        "true_positives": 238,
+        "false_negatives": 14,
+        "recall": 0.9444444444444444,
+        "mean_score": 0.5712103069538118,
+        "p05_score": 0.035928815510123974,
+        "min_score": 1.0044126611319372e-05
+      }
+    },
+    "candidate": {
+      "model": "/Users/soumya/Desktop/Projects/billsapp/bill-classifier/models/experiments/verifier_v2_screenshot/model.tflite",
+      "alpha_direct": 0.65,
+      "threshold": 0.04051218037193226,
+      "original_test": {
+        "n": 745,
+        "positive": 323,
+        "negative": 422,
+        "recall": 0.9814241486068112,
+        "fpr": 0.22985781990521326,
+        "precision": 0.7657004830917874,
+        "auc": 0.9754889733393981,
+        "tp": 317,
+        "fn": 6,
+        "fp": 97,
+        "tn": 325
+      },
+      "screenshot_test": {
+        "n": 750,
+        "false_positives": 0,
+        "fpr": 0.0,
+        "mean_score": 0.001854332454274569,
+        "p95_score": 0.008039298457258686,
+        "max_score": 0.03583708002886156
+      },
+      "screenshot_bill_test": {
+        "n": 252,
+        "true_positives": 231,
+        "false_negatives": 21,
+        "recall": 0.9166666666666666,
+        "mean_score": 0.5063950030184047,
+        "p05_score": 0.0239503758413658,
+        "min_score": 2.6123468954402797e-05
+      }
+    }
+  },
+  "paired_changes": {
+    "screenshots_fixed": 33,
+    "screenshots_regressed": 0,
+    "screenshot_bills_lost": 10,
+    "screenshot_bills_recovered": 3,
+    "original_negatives_fixed": 6,
+    "original_negatives_regressed": 6,
+    "original_bills_lost": 0,
+    "original_bills_recovered": 2
+  }
+}

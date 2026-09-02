@@ -1,0 +1,126 @@
+{
+  "architecture": "MobileNetV3Small smart multi-task router",
+  "outputs": [
+    "bill_prob",
+    "document_class",
+    "capture_context"
+  ],
+  "class_names": [
+    "receipt",
+    "invoice",
+    "structured_document",
+    "narrative_document",
+    "advertisement_presentation",
+    "text_scene",
+    "natural_photo"
+  ],
+  "context_names": [
+    "direct",
+    "screenshot"
+  ],
+  "threshold": 0.21102385222911832,
+  "best_epoch": 5,
+  "validation": {
+    "n": 1778,
+    "threshold": 0.21102385222911832,
+    "accuracy": 0.9274465691788526,
+    "precision": 0.8183118741058655,
+    "recall": 0.9965156794425087,
+    "fpr": 0.10548172757475083,
+    "auc": 0.9897206755646104,
+    "document_accuracy": 0.8695163104611924,
+    "context_accuracy": 0.9775028121484814
+  },
+  "test": {
+    "n": 1747,
+    "threshold": 0.21102385222911832,
+    "accuracy": 0.927876359473383,
+    "precision": 0.8306332842415317,
+    "recall": 0.9808695652173913,
+    "fpr": 0.09812286689419795,
+    "auc": 0.9884537765247069,
+    "document_accuracy": 0.8517458500286205,
+    "context_accuracy": 0.9828277046365197
+  },
+  "tflite_size_bytes": 1110448,
+  "training": {
+    "data_root": "/Users/soumya/Desktop/Projects/billsapp/bill-classifier",
+    "splits_path": "/Users/soumya/Desktop/Projects/billsapp/bill-classifier/data/labeled/verifier_v2_screenshot_balanced_splits.csv",
+    "initial_model": "/Users/soumya/Desktop/Projects/billsapp/bill-classifier/models/invoice_classifier.keras",
+    "resume_weights": "models/experiments/smart_router_v1/best.weights.h5",
+    "experiment_name": "smart_router_v2",
+    "image_size": 224,
+    "batch_size": 24,
+    "epochs_head": 0,
+    "epochs_finetune": 6,
+    "lr_head": 0.0005,
+    "lr_finetune": 4e-06,
+    "unfreeze_frac": 0.28,
+    "target_validation_recall": 0.995,
+    "seed": 73,
+    "dry_run": false,
+    "finalize_only": false
+  },
+  "recall_constrained_history": [
+    {
+      "epoch": 0,
+      "n": 1778,
+      "threshold": 0.21536087989807126,
+      "accuracy": 0.9240719910011248,
+      "precision": 0.8113475177304964,
+      "recall": 0.9965156794425087,
+      "fpr": 0.11046511627906977,
+      "auc": 0.9883532823225717
+    },
+    {
+      "epoch": 1,
+      "n": 1778,
+      "threshold": 0.20555342733860013,
+      "accuracy": 0.9235095613048369,
+      "precision": 0.8101983002832861,
+      "recall": 0.9965156794425087,
+      "fpr": 0.11129568106312292,
+      "auc": 0.9886831930730318
+    },
+    {
+      "epoch": 2,
+      "n": 1778,
+      "threshold": 0.2150994390249252,
+      "accuracy": 0.9257592800899888,
+      "precision": 0.8148148148148148,
+      "recall": 0.9965156794425087,
+      "fpr": 0.1079734219269103,
+      "auc": 0.9891086043038883
+    },
+    {
+      "epoch": 3,
+      "n": 1778,
+      "threshold": 0.1967782229185104,
+      "accuracy": 0.9257592800899888,
+      "precision": 0.8148148148148148,
+      "recall": 0.9965156794425087,
+      "fpr": 0.1079734219269103,
+      "auc": 0.9894848183175708
+    },
+    {
+      "epoch": 4,
+      "n": 1778,
+      "threshold": 0.19162918627262113,
+      "accuracy": 0.9274465691788526,
+      "precision": 0.8183118741058655,
+      "recall": 0.9965156794425087,
+      "fpr": 0.10548172757475083,
+      "auc": 0.9896078113605057
+    },
+    {
+      "epoch": 5,
+      "n": 1778,
+      "threshold": 0.21102385222911832,
+      "accuracy": 0.9274465691788526,
+      "precision": 0.8183118741058655,
+      "recall": 0.9965156794425087,
+      "fpr": 0.10548172757475083,
+      "auc": 0.9897206755646104
+    }
+  ]
+}

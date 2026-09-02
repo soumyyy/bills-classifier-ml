@@ -1,0 +1,253 @@
+{
+  "source_manifest": "/Users/soumya/Desktop/Projects/billsapp/bill-classifier/data/labeled/doclaynet_hard_negatives.csv",
+  "baseline_model": "/Users/soumya/Desktop/Projects/billsapp/bill-classifier/models/experiments/verifier_v2_screenshot_balanced/model.tflite",
+  "alpha_direct": 0.8,
+  "threshold": 0.3006436387035705,
+  "downloaded_rows": 2563,
+  "selected_rows": 1963,
+  "selected_counts": {
+    "test/financial_reports": 75,
+    "test/government_tenders": 66,
+    "test/laws_and_regulations": 75,
+    "test/manuals": 35,
+    "test/patents": 75,
+    "test/scientific_articles": 75,
+    "train/financial_reports": 200,
+    "train/government_tenders": 200,
+    "train/laws_and_regulations": 200,
+    "train/manuals": 200,
+    "train/patents": 200,
+    "train/scientific_articles": 200,
+    "val/financial_reports": 75,
+    "val/government_tenders": 67,
+    "val/laws_and_regulations": 60,
+    "val/manuals": 10,
+    "val/patents": 75,
+    "val/scientific_articles": 75
+  },
+  "scores": {
+    "train": {
+      "overall": {
+        "n": 1800,
+        "false_positives": 152,
+        "fpr": 0.08444444444444445,
+        "mean_score": 0.07540058462357979,
+        "p50_score": 0.0076893032976592685,
+        "p90_score": 0.2323272193000735,
+        "p95_score": 0.45981826752405347,
+        "max_score": 0.9947854748809946
+      },
+      "by_category": {
+        "financial_reports": {
+          "n": 300,
+          "false_positives": 23,
+          "fpr": 0.07666666666666666,
+          "mean_score": 0.07152266564941304,
+          "p50_score": 0.009256423288324149,
+          "p90_score": 0.17487984495271622,
+          "p95_score": 0.4432346979263808,
+          "max_score": 0.9733205233128115
+        },
+        "government_tenders": {
+          "n": 300,
+          "false_positives": 37,
+          "fpr": 0.12333333333333334,
+          "mean_score": 0.10694272765334839,
+          "p50_score": 0.006242991332121879,
+          "p90_score": 0.38803774437032035,
+          "p95_score": 0.6241839152551831,
+          "max_score": 0.9919280133012859
+        },
+        "laws_and_regulations": {
+          "n": 300,
+          "false_positives": 18,
+          "fpr": 0.06,
+          "mean_score": 0.053909714931687204,
+          "p50_score": 0.007841200288515844,
+          "p90_score": 0.14528210309849218,
+          "p95_score": 0.33244935256027147,
+          "max_score": 0.8721900316440385
+        },
+        "manuals": {
+          "n": 300,
+          "false_positives": 16,
+          "fpr": 0.05333333333333334,
+          "mean_score": 0.05141093163239709,
+          "p50_score": 0.006358849948377782,
+          "p90_score": 0.12729761183048938,
+          "p95_score": 0.3293858993640901,
+          "max_score": 0.9947854748809946
+        },
+        "patents": {
+          "n": 300,
+          "false_positives": 43,
+          "fpr": 0.14333333333333334,
+          "mean_score": 0.11553759524487267,
+          "p50_score": 0.0034870813277060085,
+          "p90_score": 0.4449959285912023,
+          "p95_score": 0.716187290596151,
+          "max_score": 0.982193692294967
+        },
+        "scientific_articles": {
+          "n": 300,
+          "false_positives": 15,
+          "fpr": 0.05,
+          "mean_score": 0.0530798726297604,
+          "p50_score": 0.009847015792135032,
+          "p90_score": 0.14162031236045872,
+          "p95_score": 0.29023872732826583,
+          "max_score": 0.9479297051080698
+        }
+      }
+    },
+    "val": {
+      "overall": {
+        "n": 362,
+        "false_positives": 41,
+        "fpr": 0.1132596685082873,
+        "mean_score": 0.08962307901248127,
+        "p50_score": 0.006830119235379916,
+        "p90_score": 0.3275193056844085,
+        "p95_score": 0.5510412049174945,
+        "max_score": 0.9549781771161896
+      },
+      "by_category": {
+        "financial_reports": {
+          "n": 75,
+          "false_positives": 7,
+          "fpr": 0.09333333333333334,
+          "mean_score": 0.07997488939313878,
+          "p50_score": 0.009727620524939633,
+          "p90_score": 0.2691422507619885,
+          "p95_score": 0.3698666048766573,
+          "max_score": 0.8204268960244884
+        },
+        "government_tenders": {
+          "n": 67,
+          "false_positives": 11,
+          "fpr": 0.16417910447761194,
+          "mean_score": 0.12880793673057256,
+          "p50_score": 0.002772158295887973,
+          "p90_score": 0.6888927214657617,
+          "p95_score": 0.7481500416165177,
+          "max_score": 0.8346608993846945
+        },
+        "laws_and_regulations": {
+          "n": 60,
+          "false_positives": 5,
+          "fpr": 0.08333333333333333,
+          "mean_score": 0.05704121233066616,
+          "p50_score": 0.007820714438898205,
+          "p90_score": 0.21820284737659384,
+          "p95_score": 0.35133379979384055,
+          "max_score": 0.5732774722944715
+        },
+        "manuals": {
+          "n": 10,
+          "false_positives": 0,
+          "fpr": 0.0,
+          "mean_score": 0.010327263823209153,
+          "p50_score": 0.0013374065644573313,
+          "p90_score": 0.01767115904191323,
+          "p95_score": 0.05012263383317568,
+          "max_score": 0.08257410862443826
+        },
+        "patents": {
+          "n": 75,
+          "false_positives": 16,
+          "fpr": 0.21333333333333335,
+          "mean_score": 0.142360302062542,
+          "p50_score": 0.005682407172607965,
+          "p90_score": 0.4897152279751278,
+          "p95_score": 0.7810776528195702,
+          "max_score": 0.9549781771161896
+        },
+        "scientific_articles": {
+          "n": 75,
+          "false_positives": 2,
+          "fpr": 0.02666666666666667,
+          "mean_score": 0.048167174724289955,
+          "p50_score": 0.0076308640252118485,
+          "p90_score": 0.16013676729677528,
+          "p95_score": 0.20333167195046079,
+          "max_score": 0.5235982259816296
+        }
+      }
+    },
+    "test": {
+      "overall": {
+        "n": 401,
+        "false_positives": 44,
+        "fpr": 0.10972568578553615,
+        "mean_score": 0.1043173858738608,
+        "p50_score": 0.010750564113585374,
+        "p90_score": 0.3528040874267401,
+        "p95_score": 0.6894008224189604,
+        "max_score": 0.9808109933792588
+      },
+      "by_category": {
+        "financial_reports": {
+          "n": 75,
+          "false_positives": 7,
+          "fpr": 0.09333333333333334,
+          "mean_score": 0.08211084056483625,
+          "p50_score": 0.00952131506947211,
+          "p90_score": 0.29782167625407696,
+          "p95_score": 0.6106943023981785,
+          "max_score": 0.7179701056345967
+        },
+        "government_tenders": {
+          "n": 66,
+          "false_positives": 14,
+          "fpr": 0.21212121212121213,
+          "mean_score": 0.19198123073436743,
+          "p50_score": 0.017788381491299018,
+          "p90_score": 0.8414752140140764,
+          "p95_score": 0.9359217276420135,
+          "max_score": 0.9808109933792588
+        },
+        "laws_and_regulations": {
+          "n": 75,
+          "false_positives": 3,
+          "fpr": 0.04,
+          "mean_score": 0.04551766411175846,
+          "p50_score": 0.007916792838368924,
+          "p90_score": 0.10628963807354036,
+          "p95_score": 0.22948338498987134,
+          "max_score": 0.6888207954852206
+        },
+        "manuals": {
+          "n": 35,
+          "false_positives": 5,
+          "fpr": 0.14285714285714285,
+          "mean_score": 0.1318462111324436,
+          "p50_score": 0.029606701602336423,
+          "p90_score": 0.4674869973272643,
+          "p95_score": 0.6362836344054361,
+          "max_score": 0.9606808007673243
+        },
+        "patents": {
+          "n": 75,
+          "false_positives": 10,
+          "fpr": 0.13333333333333333,
+          "mean_score": 0.14092554881421318,
+          "p50_score": 0.009257008878468533,
+          "p90_score": 0.5836210434098111,
+          "p95_score": 0.8783230374905845,
+          "max_score": 0.9529805507221104
+        },
+        "scientific_articles": {
+          "n": 75,
+          "false_positives": 5,
+          "fpr": 0.06666666666666667,
+          "mean_score": 0.05872452140671753,
+          "p50_score": 0.016980193230108465,
+          "p90_score": 0.211080556210891,
+          "p95_score": 0.34023674783253055,
+          "max_score": 0.5608030188229738
+        }
+      }
+    }
+  },
+  "interpretation": "Train contains the highest-scoring pages per category. Validation and test retain every downloaded page and must remain external negative holdouts."
+}

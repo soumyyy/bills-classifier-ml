@@ -1,0 +1,507 @@
+{
+  "binary_threshold": 0.15,
+  "verifier_threshold": 0.06252989917993544,
+  "image_size": 224,
+  "resize_mode": "direct",
+  "model_size_bytes": 3282456,
+  "benchmark": {
+    "standalone_verifier": {
+      "runs": 100,
+      "mean_ms": 4.163297089835396,
+      "p50_ms": 4.117917000257876,
+      "p95_ms": 4.464739902323345
+    },
+    "cascade_observed": {
+      "runs": 100,
+      "mean_ms": 5.498732588021085,
+      "p50_ms": 5.5017909908201545,
+      "p95_ms": 5.714296791120432
+    },
+    "cascade_verifier_invocations": 99,
+    "verifier_invocation_times": {
+      "runs": 99,
+      "mean_ms": 4.102774453290616,
+      "p50_ms": 4.074249998666346,
+      "p95_ms": 4.238337502465583
+    },
+    "note": "Preprocessing and image decode are excluded from inference timing."
+  },
+  "test": {
+    "binary_gate": {
+      "n": 1495,
+      "positive": 323,
+      "negative": 1172,
+      "accuracy": 0.8093645484949833,
+      "precision": 0.532312925170068,
+      "recall": 0.9690402476780186,
+      "fpr": 0.23464163822525597,
+      "tp": 313,
+      "fn": 10,
+      "fp": 275,
+      "tn": 897,
+      "auc": 0.9654238738786336
+    },
+    "verifier": {
+      "n": 1495,
+      "positive": 323,
+      "negative": 1172,
+      "accuracy": 0.9351170568561873,
+      "precision": 0.7810945273631841,
+      "recall": 0.9721362229102167,
+      "fpr": 0.07508532423208192,
+      "tp": 314,
+      "fn": 9,
+      "fp": 88,
+      "tn": 1084,
+      "auc": 0.9895339130802312
+    },
+    "cascade": {
+      "n": 1495,
+      "positive": 323,
+      "negative": 1172,
+      "accuracy": 0.9351170568561873,
+      "precision": 0.7897435897435897,
+      "recall": 0.9535603715170279,
+      "fpr": 0.06996587030716724,
+      "tp": 308,
+      "fn": 15,
+      "fp": 82,
+      "tn": 1090,
+      "auc": 0.9739113895962552
+    },
+    "verifier_multiclass_accuracy": 0.8715719063545151
+  },
+  "regression": {},
+  "production_baseline": {
+    "binary_threshold": 0.15,
+    "verifier_threshold": 0.008874409832060335,
+    "model_size_bytes": 3278952,
+    "benchmark": {
+      "runs": 50,
+      "mean_ms": 4.513227522838861,
+      "p50_ms": 4.1804370121099055,
+      "p95_ms": 6.513827171875161
+    },
+    "test": {
+      "binary_gate": {
+        "n": 921,
+        "accuracy": 0.8023887079261672,
+        "precision": 0.69449378330373,
+        "recall": 0.9750623441396509,
+        "auc": 0.9346297717245349
+      },
+      "verifier": {
+        "n": 921,
+        "accuracy": 0.7991313789359392,
+        "precision": 0.6868512110726643,
+        "recall": 0.9900249376558603,
+        "auc": 0.9546134663341647
+      },
+      "cascade": {
+        "n": 921,
+        "accuracy": 0.8414766558089034,
+        "precision": 0.7428571428571429,
+        "recall": 0.972568578553616,
+        "auc": 0.9596969115672357
+      },
+      "verifier_multiclass_accuracy": 0.6753528773072747
+    },
+    "regression": {
+      "TestPhotos": {
+        "correct": 16,
+        "total": 17,
+        "details": [
+          {
+            "file": "WhatsApp Image 2026-08-14 at 13.35.49.jpeg",
+            "binary_score": 0.894504725933075,
+            "verifier_bill_score": 0.9924552326192497,
+            "verifier_class": 0,
+            "cascade_bill": true,
+            "correct": true
+          },
+          {
+            "file": "WhatsApp Image 2026-08-14 at 13.35.50 (1).jpeg",
+            "binary_score": 0.9030615091323853,
+            "verifier_bill_score": 0.4475489409524016,
+            "verifier_class": 5,
+            "cascade_bill": true,
+            "correct": true
+          },
+          {
+            "file": "WhatsApp Image 2026-08-14 at 13.35.50.jpeg",
+            "binary_score": 0.7784144878387451,
+            "verifier_bill_score": 0.9988620611919714,
+            "verifier_class": 0,
+            "cascade_bill": true,
+            "correct": true
+          },
+          {
+            "file": "WhatsApp Image 2026-08-14 at 13.35.51 (1).jpeg",
+            "binary_score": 0.8172473311424255,
+            "verifier_bill_score": 0.9118832562753596,
+            "verifier_class": 0,
+            "cascade_bill": true,
+            "correct": true
+          },
+          {
+            "file": "WhatsApp Image 2026-08-14 at 13.35.51.jpeg",
+            "binary_score": 0.84271639585495,
+            "verifier_bill_score": 0.034522339527029544,
+            "verifier_class": 5,
+            "cascade_bill": true,
+            "correct": true
+          },
+          {
+            "file": "WhatsApp Image 2026-08-14 at 13.35.52 (1).jpeg",
+            "binary_score": 0.9443446397781372,
+            "verifier_bill_score": 0.9568282692907815,
+            "verifier_class": 0,
+            "cascade_bill": true,
+            "correct": true
+          },
+          {
+            "file": "WhatsApp Image 2026-08-14 at 13.35.52 (2).jpeg",
+            "binary_score": 0.8236973881721497,
+            "verifier_bill_score": 0.627932146191597,
+            "verifier_class": 0,
+            "cascade_bill": true,
+            "correct": true
+          },
+          {
+            "file": "WhatsApp Image 2026-08-14 at 13.35.52.jpeg",
+            "binary_score": 0.91343754529953,
+            "verifier_bill_score": 0.3856346909815329,
+            "verifier_class": 5,
+            "cascade_bill": true,
+            "correct": true
+          },
+          {
+            "file": "WhatsApp Image 2026-08-14 at 13.35.53 (1).jpeg",
+            "binary_score": 0.8895652890205383,
+            "verifier_bill_score": 0.9723446863347363,
+            "verifier_class": 0,
+            "cascade_bill": true,
+            "correct": true
+          },
+          {
+            "file": "WhatsApp Image 2026-08-14 at 13.35.53.jpeg",
+            "binary_score": 0.8410769701004028,
+            "verifier_bill_score": 0.8581676034245902,
+            "verifier_class": 0,
+            "cascade_bill": true,
+            "correct": true
+          },
+          {
+            "file": "WhatsApp Image 2026-08-14 at 13.35.54 (1).jpeg",
+            "binary_score": 0.8146800398826599,
+            "verifier_bill_score": 0.8174466498016955,
+            "verifier_class": 0,
+            "cascade_bill": true,
+            "correct": true
+          },
+          {
+            "file": "WhatsApp Image 2026-08-14 at 13.35.54.jpeg",
+            "binary_score": 0.9387369155883789,
+            "verifier_bill_score": 0.9884462255467952,
+            "verifier_class": 0,
+            "cascade_bill": true,
+            "correct": true
+          },
+          {
+            "file": "WhatsApp Image 2026-08-14 at 13.35.55 (1).jpeg",
+            "binary_score": 0.9501530528068542,
+            "verifier_bill_score": 0.9984348114261365,
+            "verifier_class": 0,
+            "cascade_bill": true,
+            "correct": true
+          },
+          {
+            "file": "WhatsApp Image 2026-08-14 at 13.35.55 (2).jpeg",
+            "binary_score": 0.2860724627971649,
+            "verifier_bill_score": 0.046078454703092575,
+            "verifier_class": 2,
+            "cascade_bill": true,
+            "correct": true
+          },
+          {
+            "file": "WhatsApp Image 2026-08-14 at 13.35.55.jpeg",
+            "binary_score": 0.7142188549041748,
+            "verifier_bill_score": 0.007855170901166275,
+            "verifier_class": 5,
+            "cascade_bill": false,
+            "correct": false
+          },
+          {
+            "file": "WhatsApp Image 2026-08-14 at 13.35.56 (1).jpeg",
+            "binary_score": 0.3407857120037079,
+            "verifier_bill_score": 0.9090730592142791,
+            "verifier_class": 0,
+            "cascade_bill": true,
+            "correct": true
+          },
+          {
+            "file": "WhatsApp Image 2026-08-14 at 13.35.56.jpeg",
+            "binary_score": 0.5426874160766602,
+            "verifier_bill_score": 0.32082006451673806,
+            "verifier_class": 5,
+            "cascade_bill": true,
+            "correct": true
+          }
+        ]
+      },
+      "Negative": {
+        "correct": 13,
+        "total": 17,
+        "details": [
+          {
+            "file": "179119.jpeg",
+            "binary_score": 0.030991731211543083,
+            "verifier_bill_score": 0.009734815313549916,
+            "verifier_class": 2,
+            "cascade_bill": false,
+            "correct": true
+          },
+          {
+            "file": "183996.jpeg",
+            "binary_score": 0.599890947341919,
+            "verifier_bill_score": 0.7858504103496671,
+            "verifier_class": 0,
+            "cascade_bill": true,
+            "correct": false
+          },
+          {
+            "file": "194562.jpeg",
+            "binary_score": 0.006426568608731031,
+            "verifier_bill_score": 0.00911120720411418,
+            "verifier_class": 2,
+            "cascade_bill": false,
+            "correct": true
+          },
+          {
+            "file": "212504.jpeg",
+            "binary_score": 0.0018195597222074866,
+            "verifier_bill_score": 7.781129170325585e-05,
+            "verifier_class": 2,
+            "cascade_bill": false,
+            "correct": true
+          },
+          {
+            "file": "3096da16-2470-4c67-92c2-9b3125b0911f.jpg",
+            "binary_score": 0.9603118300437927,
+            "verifier_bill_score": 0.00949166547798086,
+            "verifier_class": 5,
+            "cascade_bill": true,
+            "correct": false
+          },
+          {
+            "file": "35df1041-4635-4252-9158-a89ae3de1a46.jpg",
+            "binary_score": 0.9360740184783936,
+            "verifier_bill_score": 0.2112749392981641,
+            "verifier_class": 5,
+            "cascade_bill": true,
+            "correct": false
+          },
+          {
+            "file": "3f572f1b-2fd5-4186-a27a-9fce712a3ffe.jpg",
+            "binary_score": 0.04223845154047012,
+            "verifier_bill_score": 0.0017957289819605649,
+            "verifier_class": 2,
+            "cascade_bill": false,
+            "correct": true
+          },
+          {
+            "file": "6a634815-6801-4a60-9fe4-c2179e2558dd.jpg",
+            "binary_score": 0.3230869770050049,
+            "verifier_bill_score": 0.00434575293911621,
+            "verifier_class": 2,
+            "cascade_bill": false,
+            "correct": true
+          },
+          {
+            "file": "IMG_0206.PNG",
+            "binary_score": 0.00679166242480278,
+            "verifier_bill_score": 0.0029006601340597626,
+            "verifier_class": 2,
+            "cascade_bill": false,
+            "correct": true
+          },
+          {
+            "file": "IMG_0373.PNG",
+            "binary_score": 0.003843924030661583,
+            "verifier_bill_score": 3.9476096389989834e-05,
+            "verifier_class": 2,
+            "cascade_bill": false,
+            "correct": true
+          },
+          {
+            "file": "IMG_0921.jpeg",
+            "binary_score": 0.004965255502611399,
+            "verifier_bill_score": 0.0013618855009553954,
+            "verifier_class": 2,
+            "cascade_bill": false,
+            "correct": true
+          },
+          {
+            "file": "IMG_3257.jpeg",
+            "binary_score": 0.024373911321163177,
+            "verifier_bill_score": 0.008838366346026305,
+            "verifier_class": 2,
+            "cascade_bill": false,
+            "correct": true
+          },
+          {
+            "file": "IMG_5200.jpeg",
+            "binary_score": 0.001536382595077157,
+            "verifier_bill_score": 1.3831340766046196e-05,
+            "verifier_class": 2,
+            "cascade_bill": false,
+            "correct": true
+          },
+          {
+            "file": "IMG_5683.PNG",
+            "binary_score": 0.6665921211242676,
+            "verifier_bill_score": 0.008347060269443318,
+            "verifier_class": 2,
+            "cascade_bill": false,
+            "correct": true
+          },
+          {
+            "file": "IMG_7899.PNG",
+            "binary_score": 0.004428417421877384,
+            "verifier_bill_score": 0.0007878666970100312,
+            "verifier_class": 2,
+            "cascade_bill": false,
+            "correct": true
+          },
+          {
+            "file": "a919a411-73b4-44fd-81e4-978d6253dbd4.jpg",
+            "binary_score": 0.13571134209632874,
+            "verifier_bill_score": 0.009563286032062024,
+            "verifier_class": 2,
+            "cascade_bill": false,
+            "correct": true
+          },
+          {
+            "file": "dce7ccdb-330a-4501-bf0f-a088d39f0c73.jpg",
+            "binary_score": 0.33865121006965637,
+            "verifier_bill_score": 0.030784103088080883,
+            "verifier_class": 2,
+            "cascade_bill": true,
+            "correct": false
+          }
+        ]
+      },
+      "N2": {
+        "correct": 8,
+        "total": 13,
+        "details": [
+          {
+            "file": "183996.jpeg",
+            "binary_score": 0.599890947341919,
+            "verifier_bill_score": 0.7858504103496671,
+            "verifier_class": 0,
+            "cascade_bill": true,
+            "correct": false
+          },
+          {
+            "file": "185541.jpeg",
+            "binary_score": 0.0059557645581662655,
+            "verifier_bill_score": 0.010789117733111198,
+            "verifier_class": 5,
+            "cascade_bill": false,
+            "correct": true
+          },
+          {
+            "file": "38a252f3-d0e9-4c7c-adca-87999fc49a80.jpg",
+            "binary_score": 0.6137759685516357,
+            "verifier_bill_score": 0.019973665395809803,
+            "verifier_class": 5,
+            "cascade_bill": true,
+            "correct": false
+          },
+          {
+            "file": "7d99da33-c753-4d91-b800-6065c761283e.jpg",
+            "binary_score": 0.012913068756461143,
+            "verifier_bill_score": 0.0003872144952765666,
+            "verifier_class": 5,
+            "cascade_bill": false,
+            "correct": true
+          },
+          {
+            "file": "9dd39cde-6041-4c06-a22c-f6ec1627842c.jpg",
+            "binary_score": 0.018019111827015877,
+            "verifier_bill_score": 0.012999616301385686,
+            "verifier_class": 5,
+            "cascade_bill": false,
+            "correct": true
+          },
+          {
+            "file": "IMG_3472.jpeg",
+            "binary_score": 0.32756251096725464,
+            "verifier_bill_score": 0.02587394864531234,
+            "verifier_class": 5,
+            "cascade_bill": true,
+            "correct": false
+          },
+          {
+            "file": "IMG_3579.jpeg",
+            "binary_score": 0.8118085265159607,
+            "verifier_bill_score": 0.012555492110550404,
+            "verifier_class": 5,
+            "cascade_bill": true,
+            "correct": false
+          },
+          {
+            "file": "IMG_3702.jpeg",
+            "binary_score": 0.0681450366973877,
+            "verifier_bill_score": 0.0007136085332604125,
+            "verifier_class": 6,
+            "cascade_bill": false,
+            "correct": true
+          },
+          {
+            "file": "IMG_6665.jpeg",
+            "binary_score": 0.04198172315955162,
+            "verifier_bill_score": 0.000738697373890318,
+            "verifier_class": 5,
+            "cascade_bill": false,
+            "correct": true
+          },
+          {
+            "file": "IMG_7683.PNG",
+            "binary_score": 0.1396714746952057,
+            "verifier_bill_score": 0.00750540905573871,
+            "verifier_class": 2,
+            "cascade_bill": false,
+            "correct": true
+          },
+          {
+            "file": "IMG_8410.jpeg",
+            "binary_score": 0.0038314282428473234,
+            "verifier_bill_score": 1.3327852684597019e-05,
+            "verifier_class": 5,
+            "cascade_bill": false,
+            "correct": true
+          },
+          {
+            "file": "IMG_8447.jpeg",
+            "binary_score": 0.6266319751739502,
+            "verifier_bill_score": 0.0053395387949422,
+            "verifier_class": 5,
+            "cascade_bill": false,
+            "correct": true
+          },
+          {
+            "file": "d70bf0a6-44fa-48ca-b609-6555bbd994fd.jpg",
+            "binary_score": 0.170741006731987,
+            "verifier_bill_score": 0.012696111691184342,
+            "verifier_class": 2,
+            "cascade_bill": true,
+            "correct": false
+          }
+        ]
+      }
+    }
+  },
+  "evaluation_note": "The 921-image test split is the primary comparison. Negative contains 12 train, 2 validation, and 3 test examples, so its aggregate regression score is not an independent generalization estimate."
+}
