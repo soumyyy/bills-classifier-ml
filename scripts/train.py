@@ -21,7 +21,7 @@ import json
 import random
 from pathlib import Path
 
-from _common import require_file
+from _common import require_file, run_fingerprint
 
 import albumentations as A
 import numpy as np
@@ -491,10 +491,31 @@ def main() -> None:
     metrics = evaluate_on_test(model, splits["test"], args.batch_size)
     for k, v in metrics.items():
         print(f"  {k}: {v}")
+    # Recorded alongside the metrics so a result can be traced back to the
+    # exact inputs that produced it. splits.csv is rewritten in place by every
+    # run, so without this a model and the split file beside it can silently
+    # stop corresponding - which is how splits.csv came to hold 920 test rows
+    # while the recorded metrics said 733, with nothing detecting it.
+    metrics["run"] = run_fingerprint(
+        seed=args.seed,
+        manifest=MANIFEST,
+        splits=SPLITS_PATH,
+        args={
+            "batch_size": args.batch_size,
+            "hard_negative_repeat": getattr(args, "hard_negative_repeat", None),
+            "public_negative_train_fraction": getattr(args, "public_negative_train_fraction", None),
+            "mined_negative_repeat": getattr(args, "mined_negative_repeat", None),
+            "limit": getattr(args, "limit", None),
+        },
+    )
     METRICS_PATH.parent.mkdir(parents=True, exist_ok=True)
     with open(METRICS_PATH, "w") as f:
         json.dump(metrics, f, indent=2)
     print(f"Saved final metrics to {METRICS_PATH}")
+    print(
+        f"  run: seed={metrics['run']['seed']} git={metrics['run']['git_revision']} "
+        f"splits={metrics['run']['splits_sha256'][:12]}"
+    )
 
     FINAL_MODEL_PATH.parent.mkdir(parents=True, exist_ok=True)
     model.save(FINAL_MODEL_PATH)

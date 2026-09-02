@@ -20,7 +20,7 @@ import shutil
 import time
 from pathlib import Path
 
-from _common import require_file
+from _common import check_split_matches, require_file
 
 import numpy as np
 import tensorflow as tf
@@ -36,6 +36,7 @@ IMG_SIZE = 224
 TARGET_MAX_BYTES = 3 * 1024 * 1024  # README target: under 3MB
 DECISION_THRESHOLD = 0.15  # app operating point; see logs/deployment_metrics.json
 DEPLOYMENT_METRICS_PATH = REPO_ROOT / "logs" / "deployment_metrics.json"
+FINAL_METRICS_PATH = REPO_ROOT / "logs" / "final_metrics.json"
 MIN_ACCEPTABLE_RECALL = 0.95  # quantization must not meaningfully erode the recall guarantee
 
 
@@ -44,6 +45,14 @@ def sample_paths(n: int, seed: int = 1) -> list[Path]:
         rows = list(csv.DictReader(f))
     random.Random(seed).shuffle(rows)
     return [REPO_ROOT / r["filepath"] for r in rows[:n]]
+
+
+def recorded_run() -> dict | None:
+    """The run fingerprint saved when the current model was trained."""
+    if not FINAL_METRICS_PATH.exists():
+        return None
+    with open(FINAL_METRICS_PATH) as f:
+        return json.load(f).get("run")
 
 
 def deployment_threshold() -> float:
@@ -122,6 +131,11 @@ def evaluate_on_test_split(interpreter: tf.lite.Interpreter, threshold: float) -
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
+        "--allow-split-mismatch",
+        action="store_true",
+        help="Evaluate even when splits.csv no longer matches the split the model was trained on. The resulting metrics describe a different split from the one the model saw.",
+    )
+    parser.add_argument(
         "--sample-seed",
         type=int,
         default=1,
@@ -149,6 +163,8 @@ def main() -> None:
     threshold = deployment_threshold() if args.threshold is None else args.threshold
     if not 0.0 <= threshold <= 1.0:
         raise ValueError("--threshold must be between 0 and 1")
+
+    check_split_matches(recorded_run(), SPLITS_PATH, allow_mismatch=args.allow_split_mismatch)
 
     tflite_model = convert()
 

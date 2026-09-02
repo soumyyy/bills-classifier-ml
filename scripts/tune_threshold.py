@@ -14,7 +14,7 @@ import csv
 import json
 from pathlib import Path
 
-from _common import require_file
+from _common import check_split_matches, require_file
 
 import numpy as np
 import tensorflow as tf
@@ -34,6 +34,15 @@ IMG_SIZE = 224
 # explicit, separate step - see --promote-threshold.
 CALIBRATION_PATH = REPO_ROOT / "logs" / "calibration.json"
 DEPLOYMENT_METRICS_PATH = REPO_ROOT / "logs" / "deployment_metrics.json"
+FINAL_METRICS_PATH = REPO_ROOT / "logs" / "final_metrics.json"
+
+
+def recorded_run() -> dict | None:
+    """The run fingerprint saved when the current model was trained."""
+    if not FINAL_METRICS_PATH.exists():
+        return None
+    with open(FINAL_METRICS_PATH) as f:
+        return json.load(f).get("run")
 
 
 def deployed_threshold() -> float | None:
@@ -127,6 +136,11 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--target-recall", type=float, default=0.99)
     parser.add_argument(
+        "--allow-split-mismatch",
+        action="store_true",
+        help="Evaluate even when splits.csv no longer matches the split the model was trained on. The resulting metrics describe a different split from the one the model saw.",
+    )
+    parser.add_argument(
         "--promote-threshold",
         action="store_true",
         help=(
@@ -138,6 +152,8 @@ def main() -> None:
         ),
     )
     args = parser.parse_args()
+
+    check_split_matches(recorded_run(), SPLITS_PATH, allow_mismatch=args.allow_split_mismatch)
 
     model = tf.keras.models.load_model(require_file(MODEL_PATH, "python scripts/train.py"))
     val_rows = load_split("val")
